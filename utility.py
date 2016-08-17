@@ -1,15 +1,28 @@
+from random import randint
+
+
 class Snake:
+    # body[0] is the snake head
+
     def __init__(self, color, points, width, height, start_point, direc):
-        self.body = [rectangle(start_point[0], start_point[1])]
+        self.body = [Rectangle(start_point[0], start_point[1], width, height)]
         self.color = color
         self.points = points
-        self.width = width
-        self.height = height
         self.direc = direc
+        
+
+    def can_eat(self, food) :
+        # collision detection
+        if self.body[0].x < food.rect.x + food.rect.width and  self.body[0].x + self.body[0].width > food.rect.x and self.body[0].y < food.rect.y + food.rect.height and self.body[0].height + self.body[0].y > food.rect.y :
+            return True
+
+        return False
+
+
 
     def eat(self):
         self.points += 1
-        self.body.append(rectangle(start_point[0], start_point[1]))
+        self.body.append(Rectangle(self.body[0].x, self.body[0].y, self.body[0].width, self.body[0].height))
 
 
 
@@ -38,7 +51,23 @@ class Snake:
             self.body[i].y = self.body[i-1].y
 
 
-class rectangle:
-    def __init__(self, x, y):
+class Rectangle:
+    def __init__(self, x, y, width, height):
         self.x = x
         self.y = y
+        self.width = width
+        self.height = height
+
+
+class Food:
+
+    def __init__(self, screen_width, screen_height, color):
+        self.screen_width = screen_width
+        self.screen_height = screen_height
+        self.color = color
+        self.rect = Rectangle(0,0,7,7)
+        self.calc_new_pos()
+
+    def calc_new_pos(self):
+        self.rect.x = randint(0, self.screen_width-20)
+        self.rect.y = randint(0, self.screen_height-20)
