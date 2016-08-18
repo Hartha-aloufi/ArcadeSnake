@@ -40,9 +40,19 @@ class Snake:
             new_y += speed
 
         if new_x < width and new_x > -1 and new_y < height and new_y > -1 :
-            self.move_body()
-            self.body[0].x = new_x
+            tempx = self.body[0].x
+            tempy = self.body[0].y
+
             self.body[0].y = new_y
+            self.body[0].x = new_x
+            self.move_body()
+
+            if self.detect_self_collision() :
+                self.body[0].x = tempx
+                self.body[0].y = tempy
+                return False
+
+        return True
 
 
     def move_body(self):
@@ -53,6 +63,11 @@ class Snake:
             self.body[length - i].y = self.body[length - i - 1].y
 
 
+    def detect_collision_with_other_player(self, other):
+        for i in range(1, len(other.body)) :
+            if self.body[0].x < other.body[i].x + other.body[i].width and  self.body[0].x + self.body[0].width > other.body[i].x and self.body[0].y < other.body[i].y + other.body[i].height and self.body[0].height + self.body[0].y > other.body[i].y :
+                return True
+                
     def detect_self_collision(self):
         for i in range(3, len(self.body)):
             if self.body[0].x < self.body[i].x + self.body[i].width and  self.body[0].x + self.body[0].width > self.body[i].x and self.body[0].y < self.body[i].y + self.body[i].height and self.body[0].height + self.body[0].y > self.body[i].y :

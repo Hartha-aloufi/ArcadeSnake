@@ -2,6 +2,7 @@ import pygame
 from copy import deepcopy
 import sys
 from utility import *
+from socketIO_client import SocketIO, LoggingNamespace
 
 GREEN = (153, 204, 0)
 YELLOW = (255, 191, 0)
@@ -13,6 +14,10 @@ SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 
 pygame.init()
+socketIO = SocketIO('localhost', 8080, LoggingNamespace)
+
+
+
 
 gameDisplay = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption('Hartha')
@@ -58,9 +63,9 @@ while not gameExit:
 
 
     gameDisplay.fill(SELVER)
-    player1.move_head(speed, SCREEN_WIDTH, SCREEN_HEIGHT)
 
-    if player1.detect_self_collision() :
+
+    if not player1.move_head(speed, SCREEN_WIDTH, SCREEN_HEIGHT) :
         player1.color = RED
     else :
         player1.color = GREEN
@@ -68,6 +73,7 @@ while not gameExit:
     if player1.can_eat(food) :
         player1.eat()
         food.calc_new_pos()
+        socketIO.emit('eatFood', {'x' : 3})
 
 
     for rect in player1.body :
@@ -75,7 +81,7 @@ while not gameExit:
 
     pygame.draw.rect(gameDisplay, food.color, [food.rect.x, food.rect.y, food.rect.width, food.rect.height])
     pygame.display.update()
-    clock.tick(30)
+    clock.tick(15)
 
 pygame.quit()
 sys.exit()
