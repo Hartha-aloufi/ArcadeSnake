@@ -9,7 +9,7 @@ class Snake:
         self.color = color
         self.points = points
         self.direc = direc
-        
+
 
     def can_eat(self, food) :
         # collision detection
@@ -46,9 +46,19 @@ class Snake:
 
 
     def move_body(self):
+        length = len(self.body)
+
         for i in range(1, len(self.body)) :
-            self.body[i].x = self.body[i-1].x
-            self.body[i].y = self.body[i-1].y
+            self.body[length - i].x = self.body[length - i - 1].x
+            self.body[length - i].y = self.body[length - i - 1].y
+
+
+    def detect_self_collision(self):
+        for i in range(3, len(self.body)):
+            if self.body[0].x < self.body[i].x + self.body[i].width and  self.body[0].x + self.body[0].width > self.body[i].x and self.body[0].y < self.body[i].y + self.body[i].height and self.body[0].height + self.body[0].y > self.body[i].y :
+                return True
+
+        return False
 
 
 class Rectangle:
