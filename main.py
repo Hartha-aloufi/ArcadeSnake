@@ -2,7 +2,10 @@ import pygame
 from copy import deepcopy
 import sys
 from utility import *
-from socketIO_client import SocketIO, LoggingNamespace
+from socketIO_client import SocketIO, BaseNamespace
+# from flask import Flask;
+# import socketio;
+
 
 GREEN = (153, 204, 0)
 YELLOW = (255, 191, 0)
@@ -13,9 +16,24 @@ SNAKE_HEIGHT = 12
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 
-pygame.init()
-socketIO = SocketIO('127.0.0.1', 8080, LoggingNamespace)
 
+class Namespace(BaseNamespace):
+    def on_server_emit(self, *args):
+        print("received...");
+
+    def on_connect(self):
+        print("Connected");
+    
+
+
+
+pygame.init()
+socketIO = SocketIO('localhost', 8080, Namespace)
+
+
+socketIO.define(Namespace, "/");
+
+# socketIO.on('server_emit', Namespace.on_emit_server);
 
 gameDisplay = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption('Hartha')
