@@ -1,76 +1,4 @@
 
-
-var http = require('http');
-var server = http.createServer(function(req, res){
-  res.end('Arcade server');
-});
-
-var io = require('socket.io')(server);
-var io_client = require('socket.io-client');
-var socketio = io_client.connect('http://localhost:8080', { reconnection: true, transports: ['websocket', 'polling'] });
-
-const GREEN = [153, 204, 0];
-const YELLOW = [255, 191, 0];
-const SELVER = [140, 140, 140];
-const RED = [255, 0 , 0];
-const SNAKE_WIDTH = 12;
-const SNAKE_HEIGHT = 12;
-const SCREEN_WIDTH = 800;
-const SCREEN_HEIGHT = 600;
-const player1_start_point = [10, 10];
-const player2_start_point = [780, 580];
-const SPEED = 12;
-
-server.listen(8080);
-console.log('server is now running');
-
-var connection = [];
-var player = [];
-var food = new Food(SCREEN_WIDTH, SCREEN_HEIGHT, RED);
-
-io.on('connection', function(socket){
-  console.log('new user connect');
-
-  connection.push(socket);
-  player.push(new Snake(GREEN, 0, SNAKE_WIDTH, SNAKE_HEIGHT, player1_start_point,1));
-
-
-
-    socket.on('disconnect', function(){
-  		var playerIndex = connection.indexOf(socket);
-  		player.splice(playerIndex, 1);
-  		connection.splice(playerIndex, 1);
-  		console.log('player number ' + (playerIndex + 1) + ' disconnect');
-    });
-
-    socket.on('changeDirction', function(newDirection){
-      console.log('yes');
-      player[connection.indexOf(socket)].direc = newDirection;
-
-      io.emit('server_emit', {'x' : 1});
-    });
-});
-
-function run(){
-  for (var i = 0; i < player.length; i++) {
-    if(!player[i].move_head(SPEED, SCREEN_WIDTH, SCREEN_HEIGHT) ){
-      player[i].color = RED;
-    }
-
-    if(player[i].can_eat(food)){
-      player[i].eat();
-      food.calc_new_pos();
-    }
-
-    io.emit('draw', {player : player, food : food});
-  }
-}
-
-
-setInterval(run, 30);
-
-
-
  function Snake(color, points, width, height, start_point, direc){
     // body[0] is the snake head
 
@@ -127,7 +55,7 @@ setInterval(run, 30);
       }}
 
     this.move_body = function(){
-        var length = this.body.length
+        var length = len(this.body);
 
         for(var i = 1; i < this.body.length; i++){
             this.body[length - i].x = this.body[length - i - 1].x;
@@ -167,8 +95,8 @@ function Food(screen_width, screen_height, color){
     this.screen_width = screen_width;
     this.screen_height = screen_height;
     this.color = color;
-    this.rect = new Rectangle(50,50,7,7);
-
+    this.rect = Rectangle(0,0,7,7);
+    this.calc_new_pos();
 
     this.calc_new_pos = function(){
         this.rect.y = (Math.random() * this.screen_height-20);

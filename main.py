@@ -14,26 +14,42 @@ SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 
 pygame.init()
-socketIO = SocketIO('localhost', 8080, LoggingNamespace)
-
-
+socketIO = SocketIO('127.0.0.1', 8080, LoggingNamespace)
 
 
 gameDisplay = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption('Hartha')
 
-player1_start_point = (10, 10)
-player2_start_point = (780, 580)
+
 clock = pygame.time.Clock()
 
-player1 = Snake(GREEN, 0, SNAKE_WIDTH, SNAKE_HEIGHT, player1_start_point, 1)
-player2 = Snake(YELLOW, 0, SNAKE_WIDTH, SNAKE_HEIGHT, player2_start_point, 2)
-food = Food(SCREEN_WIDTH, SCREEN_HEIGHT, RED)
+
 
 gameExit = False
 
+
+
+def on_draw(self, *data):
+    print('sdfsdfsdfsdf')
+    print(data)
+    for p in range(0, data.player):
+        for rect in range(0, p.body):
+            pygame.draw.rect(gameDisplay, p.color, [rect.x, rect.y, SNAKE_WIDTH, SNAKE_HEIGHT])
+
+    pygame.draw.rect(gameDisplay, data.food.color, [data.food.rect.x, data.food.rect.y, data.food.rect.width, data.food.rect.height])
+    gameDisplay.fill(SELVER)
+    pygame.display.update()
+
+def on_server_emit(*args):
+    print("recieved from server")
+
+
+socketIO.on('draw', on_draw)
+# Listen
+
 while not gameExit:
     speed = 10
+    socketIO.on('server_emit', on_server_emit)
 
     for event in pygame.event.get() :
         if event.type == pygame.QUIT :
@@ -42,46 +58,19 @@ while not gameExit:
         elif event.type == pygame.KEYDOWN :
 
             if event.key == pygame.K_RIGHT :
-                if player1.direc != 2 :
-                    player1.direc = 1
-                    speed = 12
+                socketIO.emit('changeDirction', 1)
 
             elif event.key == pygame.K_LEFT :
-                if player1.direc != 1 :
-                    player1.direc = 2
-                    speed = 12
+                socketIO.emit('changeDirction', 2)
 
             elif event.key == pygame.K_UP :
-                if player1.direc != 4 :
-                    player1.direc = 3
-                    speed = 12
+                socketIO.emit('changeDirction', 3)
 
             elif event.key == pygame.K_DOWN :
-                if player1.direc != 3 :
-                    player1.direc = 4
-                    speed = 12
+                socketIO.emit('changeDirction', 4)
 
+    clock.tick(30)
 
-    gameDisplay.fill(SELVER)
-
-
-    if not player1.move_head(speed, SCREEN_WIDTH, SCREEN_HEIGHT) :
-        player1.color = RED
-    else :
-        player1.color = GREEN
-
-    if player1.can_eat(food) :
-        player1.eat()
-        food.calc_new_pos()
-        socketIO.emit('eatFood', {'x' : 3})
-
-
-    for rect in player1.body :
-        pygame.draw.rect(gameDisplay, player1.color, [rect.x, rect.y, SNAKE_WIDTH, SNAKE_HEIGHT])
-
-    pygame.draw.rect(gameDisplay, food.color, [food.rect.x, food.rect.y, food.rect.width, food.rect.height])
-    pygame.display.update()
-    clock.tick(15)
-
+socketIO.off('server_emit')
 pygame.quit()
 sys.exit()
