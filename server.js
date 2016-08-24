@@ -1,5 +1,3 @@
-
-
 var http = require('http');
 var server = http.createServer(function(req, res){
 	res.end('Arcade server');
@@ -24,43 +22,96 @@ console.log('server is now running');
 
 var connection = [];
 var player = [];
+
 var food = new Food(SCREEN_WIDTH, SCREEN_HEIGHT, RED);
+var connectionCounter = 0;
 
 io.on('connection', function(socket){
-	console.log('new user connect ' + player.length);
+	connectionCounter++;
 
-	connection.push(socket);
-	player.push(new Snake(GREEN, 0, SNAKE_WIDTH, SNAKE_HEIGHT, player1_start_point,1));
+	// temprory, to handle double connections
+	if((connectionCounter & 1) == 1)
+		return;
+
+	console.log('new user connect ');
+
+	socket.on('create new player', function(){
+		console.log('dddd');
+		connection.push(socket);
+		player.push(new Snake(GREEN, 0, SNAKE_WIDTH, SNAKE_HEIGHT, player1_start_point,1));
+
+	});
 
 	socket.on('disconnect', function(){
   		var playerIndex = connection.indexOf(socket);
+
+			if(playerIndex == -1)
+				return;
+
   		player.splice(playerIndex, 1);
   		connection.splice(playerIndex, 1);
-  		console.log('player number ' + (playerIndex + 1) + ' disconnect');
+  		console.log('player number ' + playerIndex + ' disconnect');
 	});
 
 	socket.on('changeDirction', function(newDirection){
 		var  idx = connection.indexOf(socket);
+
+		if(idx == -1)
+			return;
+
 		var dir = player[idx].direc;
 
 		if((dir % 2 == 0 && dir -1 != newDirection) || (dir % 2 != 0 && dir + 1 != newDirection))
 				player[idx].direc = newDirection;
 	});
 
-	socket.on('draw request', function(){
+	socket.on('draw request', function(isGameStarted){
+
+		if(player.length < 2 || !isGameStarted){
+			io.emit('before start the game');
+			return;
+		}
+
+
+		var playerIndex = connection.indexOf(socket);
+		// recive draw request from single client only
+		if(playerIndex != 0 && connection.length != 0)
+			return;
+
+		var winner = -1;
+
 		for (var i = 0; i < player.length; i++) {
-			if(!player[i].move_head(SPEED, SCREEN_WIDTH, SCREEN_HEIGHT) ){
-				player[i].color = RED;
+			if(player[i].move_head(SPEED, SCREEN_WIDTH, SCREEN_HEIGHT) ){
+					if(player[i].detect_self_collision()){
+							player[i].color = RED;
+							//game over
+					} else {
+						for (var j = 0; j < player.length; j++) {
+							if(i == j)
+								continue;
+							if(player[i].detect_collision_with_other_player(player[j])){
+								player[i].color = RED;
+								// game over
+							}
+						}
+					}
 			}
 
 			if(player[i].can_eat(food)){
 				player[i].eat();
+
+				if(player[i].points == 1){
+					winner = i;
+				}
+
 				food.calc_new_pos();
 			}
 		}
 
 		io.emit('draw', {player : player, food : food});
 
+		if(winner != -1)
+			io.emit('player win', i);
 	});
 
 });
@@ -108,21 +159,16 @@ function Snake(color, points, width, height, start_point, direc){
 			new_y += speed;
 
 		if (new_x < width && new_x > -1 && new_y < height && new_y > -1){
-			var tempx = this.body[0].x;
-			var tempy = this.body[0].y;
 
+			this.move_body();
 			this.body[0].y = new_y;
 			this.body[0].x = new_x;
-			this.move_body();
-
-			if (this.detect_this_collision()){
-				this.body[0].x = tempx;
-				this.body[0].y = tempy;
-				return false;
-			}
 
 			return true;
-		}}
+		}
+
+		return false;
+	}
 
 	this.move_body = function(){
 		var length = this.body.length;
@@ -141,7 +187,7 @@ function Snake(color, points, width, height, start_point, direc){
 		}
 	}
 
-	this.detect_this_collision = function(){
+	this.detect_self_collision = function(){
 		for(var i = 3; i < this.body.length; i++)
 			if (this.body[0].x < this.body[i].x + this.body[i].width &&  this.body[0].x + this.body[0].width > this.body[i].x && this.body[0].y < this.body[i].y + this.body[i].height && this.body[0].height + this.body[0].y > this.body[i].y)
 				return true;
@@ -169,7 +215,9 @@ function Food(screen_width, screen_height, color){
 
 
 	this.calc_new_pos = function(){
-		this.rect.y = (Math.random() * this.screen_height-20);
-		this.rect.x = (Math.random() * this.screen_width - 20);
+
+		this.rect.y = (Math.random() * (this.screen_height-20));
+		this.rect.x = (Math.random() * (this.screen_width - 20));
+
 	}
 }
