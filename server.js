@@ -6,8 +6,6 @@ var server = http.createServer(function(req, res){
 });
 
 var io = require('socket.io')(server);
-var io_client = require('socket.io-client');
-var socketio = io_client.connect('http://localhost:8080', { reconnection: true, transports: ['websocket', 'polling'] });
 
 const GREEN = [153, 204, 0];
 const YELLOW = [255, 191, 0];
@@ -29,12 +27,10 @@ var player = [];
 var food = new Food(SCREEN_WIDTH, SCREEN_HEIGHT, RED);
 
 io.on('connection', function(socket){
-	console.log('new user connect');
+	console.log('new user connect ' + player.length);
 
 	connection.push(socket);
 	player.push(new Snake(GREEN, 0, SNAKE_WIDTH, SNAKE_HEIGHT, player1_start_point,1));
-	console.log("emiting");
-	io.emit('server_emit', '/');
 
 	socket.on('disconnect', function(){
   		var playerIndex = connection.indexOf(socket);
@@ -44,30 +40,32 @@ io.on('connection', function(socket){
 	});
 
 	socket.on('changeDirction', function(newDirection){
-		console.log('yes');
-		player[connection.indexOf(socket)].direc = newDirection;
+		var  idx = connection.indexOf(socket);
+		var dir = player[idx].direc;
 
-		io.emit('server_emit', {'x' : 1});
+		if((dir % 2 == 0 && dir -1 != newDirection) || (dir % 2 != 0 && dir + 1 != newDirection))
+				player[idx].direc = newDirection;
 	});
-});
 
-function run(){
-	for (var i = 0; i < player.length; i++) {
-		if(!player[i].move_head(SPEED, SCREEN_WIDTH, SCREEN_HEIGHT) ){
-			player[i].color = RED;
-		}
+	socket.on('draw request', function(){
+		for (var i = 0; i < player.length; i++) {
+			if(!player[i].move_head(SPEED, SCREEN_WIDTH, SCREEN_HEIGHT) ){
+				player[i].color = RED;
+			}
 
-		if(player[i].can_eat(food)){
-			player[i].eat();
-			food.calc_new_pos();
+			if(player[i].can_eat(food)){
+				player[i].eat();
+				food.calc_new_pos();
+			}
 		}
 
 		io.emit('draw', {player : player, food : food});
-	}
-}
+
+	});
+
+});
 
 
-setInterval(run, 30);
 
 
 
@@ -77,7 +75,7 @@ function Snake(color, points, width, height, start_point, direc){
 
 	this.body = [new Rectangle(start_point[0], start_point[1], width, height)];
 	this.color = color;
-	this.points = points;
+	this.points = points
 	this.direc = direc;
 
 
@@ -92,7 +90,7 @@ function Snake(color, points, width, height, start_point, direc){
 
 	this.eat = function(){
 		this.points += 1;
-		this.body.append(Rectangle(this.body[0].x, this.body[0].y, this.body[0].width, this.body[0].height));
+		this.body.push(new Rectangle(this.body[0].x, this.body[0].y, this.body[0].width, this.body[0].height));
 	}
 
 
@@ -127,7 +125,7 @@ function Snake(color, points, width, height, start_point, direc){
 		}}
 
 	this.move_body = function(){
-		var length = this.body.length
+		var length = this.body.length;
 
 		for(var i = 1; i < this.body.length; i++){
 			this.body[length - i].x = this.body[length - i - 1].x;
