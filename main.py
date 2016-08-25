@@ -9,6 +9,7 @@ import time
 
 WHITE = (255,255,255)
 SELVER = (140, 140, 140)
+RED = [255, 0 , 0]
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 GREEN = (153, 204, 0)
@@ -22,7 +23,7 @@ pygame.display.set_caption('Hartha')
 clock = pygame.time.Clock()
 
 
-small_font = pygame.font.SysFont('comicsansms', 25)
+small_font = pygame.font.SysFont('comicsansms', 15)
 mid_font = pygame.font.SysFont('comicsansms', 50)
 large_font = pygame.font.SysFont('comicsansms', 70)
 
@@ -37,13 +38,25 @@ def text_objects(text, color, size):
 
     return textSurface, textSurface.get_rect()
 
-def messege_to_secreen(msg, color, pos, size = 'small'):
+def messege_to_secreen(msg, color, posV, posH, size = 'small'):
     textSurf, textRect = text_objects(msg, color, size)
-    if pos == 'center':
-        textRect.center = (SCREEN_WIDTH/2), (SCREEN_HEIGHT/2)
-    elif pos == 'bottom' :
-        textRect.center = (SCREEN_WIDTH/2), (SCREEN_HEIGHT - 20)
+    v,h =0,0
 
+    if posV == 'top':
+        v = 20
+    elif posV == 'bottom' :
+        v = SCREEN_HEIGHT - 20
+    elif posV == 'center' :
+        v = SCREEN_HEIGHT / 2
+
+    if posH == 'right':
+        h = 50
+    elif posH == 'left':
+        h = SCREEN_WIDTH - 50
+    elif posH == 'center':
+        h = SCREEN_WIDTH / 2
+
+    textRect.center = h, v
     gameDisplay.blit(textSurf, textRect)
 
 
@@ -53,23 +66,36 @@ class Namespace(BaseNamespace):
     def on_connect(self):
         print("Connected")
 
-    def on_player_win(self, *winner):
+    def on_player_win(self):
+        global x, isGameStarted
         msg = 'you win '
-        msg += str(winner[0])
-        messege_to_secreen(msg, GREEN, 'center')
+        messege_to_secreen(msg, GREEN, 'center', 'center', 'large')
         pygame.display.update()
         time.sleep(3)
-        pygame.quit()
+        isGameStarted = False
+        x = 0
+        socketIO.emit('disconnect')
+
+    def on_game_over(self):
+        global x, isGameStarted
+        msg = 'Game over'
+        messege_to_secreen(msg, RED, 'center', 'center', 'large')
+        pygame.display.update()
+        time.sleep(3)
+        isGameStarted = False
+        x = 0
+        socketIO.emit('disconnect')
+
 
 
     def on_before_start_the_game(self):
         gameDisplay.fill(WHITE)
 
         if isGameStarted:
-            messege_to_secreen('Waiting the other player to start the game', GREEN,'center', 'mid')
+            messege_to_secreen('Waiting the other player to start the game', GREEN,'center', 'center', 'mid')
         else :
-            messege_to_secreen('Press enter to start the game', GREEN,'bottom', 'mid')
-            messege_to_secreen('Arcade Snake Game', GREEN,'center')
+            messege_to_secreen('Press enter to start the game', GREEN,'bottom', 'center', 'mid')
+            messege_to_secreen('Arcade Snake Game', GREEN,'center', 'center', 'large')
 
 
 
@@ -85,7 +111,17 @@ class Namespace(BaseNamespace):
             for j in range(0, len(player[i]['body'])):
                 pygame.draw.rect(gameDisplay, player[i]['color'], [player[i]['body'][j]['x'], player[i]['body'][j]['y'], player[i]['body'][j]['width'], player[i]['body'][j]['height']])
 
+            if i == 0:
+                messege_to_secreen('GREEN SNAKE : ' + (str(player[i]['points'])), WHITE, 'bottom', 'left')
+            elif(i == 1):
+                messege_to_secreen('BLACK SNAKE : ' + (str(player[i]['points'])), WHITE, 'bottom', 'right')
+            else :
+                messege_to_secreen('YELLOW SNAKE : ' + (str(player[i]['points'])), WHITE, 'bottom', 'center')
+
+
+
         pygame.draw.rect(gameDisplay, food['color'], [food['rect']['x'], food['rect']['y'], food['rect']['width'], food['rect']['height']])
+
 
 
 
@@ -97,11 +133,11 @@ def net():
 
 def on_starting():
     gameDisplay.fill(SELVER)
-    messege_to_secreen('Redy!!', GREEN, 'center', 'large')
+    messege_to_secreen('Redy..', GREEN,'center', 'center', 'large')
     pygame.display.update()
     time.sleep(5)
     gameDisplay.fill(SELVER)
-    messege_to_secreen('GO!!', GREEN, 'cneter', 'large')
+    messege_to_secreen('GO!!', GREEN, 'center', 'center', 'large')
     pygame.display.update()
     time.sleep(1)
 
@@ -150,12 +186,14 @@ while not gameExit:
     pygame.display.update()
 
     if x == 2 :
-        messege_to_secreen('Redy!!', GREEN, 'center', 'large')
+        messege_to_secreen('Redy!!', GREEN, 'center', 'center', 'large')
         pygame.display.update()
         time.sleep(2)
-        messege_to_secreen('GO!!', GREEN, 'center', 'large')
+        gameDisplay.fill(SELVER)
+        messege_to_secreen('GO!!', GREEN, 'center', 'center', 'large')
         pygame.display.update()
         time.sleep(0.24)
+        x+=1
 
 
 socketIO.emit('disconnect')

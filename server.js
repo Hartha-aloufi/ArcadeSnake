@@ -9,6 +9,7 @@ const GREEN = [153, 204, 0];
 const YELLOW = [255, 191, 0];
 const SELVER = [140, 140, 140];
 const RED = [255, 0 , 0];
+const BLACK = [0, 0, 0];
 const SNAKE_WIDTH = 12;
 const SNAKE_HEIGHT = 12;
 const SCREEN_WIDTH = 800;
@@ -36,9 +37,17 @@ io.on('connection', function(socket){
 	console.log('new user connect ');
 
 	socket.on('create new player', function(){
-		console.log('dddd');
 		connection.push(socket);
-		player.push(new Snake(GREEN, 0, SNAKE_WIDTH, SNAKE_HEIGHT, player1_start_point,1));
+
+		var color;
+		if(connection.length == 1)
+			color = GREEN;
+		else if(connection.length == 2)
+			color = BLACK;
+		else
+			color = RED;
+
+		player.push(new Snake(color, 0, SNAKE_WIDTH, SNAKE_HEIGHT, player1_start_point,1));
 
 	});
 
@@ -68,7 +77,7 @@ io.on('connection', function(socket){
 	socket.on('draw request', function(isGameStarted){
 
 		if(player.length < 2 || !isGameStarted){
-			io.emit('before start the game');
+			socket.emit('before start the game');
 			return;
 		}
 
@@ -91,7 +100,10 @@ io.on('connection', function(socket){
 								continue;
 							if(player[i].detect_collision_with_other_player(player[j])){
 								player[i].color = RED;
-								// game over
+
+
+							} else {
+								
 							}
 						}
 					}
@@ -100,18 +112,25 @@ io.on('connection', function(socket){
 			if(player[i].can_eat(food)){
 				player[i].eat();
 
-				if(player[i].points == 1){
+				if(player[i].points == 10){
 					winner = i;
+				//	console.log(connection[i].conn);
+
 				}
 
 				food.calc_new_pos();
 			}
 		}
 
+
 		io.emit('draw', {player : player, food : food});
 
-		if(winner != -1)
-			io.emit('player win', i);
+
+		if(winner != -1){
+			connection[winner].emit('player win')
+			connection[winner].broadcast.emit('game over')
+		}
+
 	});
 
 });
