@@ -182,7 +182,7 @@ while not gameExit:
 
 
     socketIO.emit('draw request', isGameStarted)
-    clock.tick(30)
+    clock.tick(15)
     pygame.display.update()
 
     if x == 2 :
