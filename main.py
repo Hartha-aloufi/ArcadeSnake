@@ -15,7 +15,8 @@ SCREEN_HEIGHT = 600
 GREEN = (153, 204, 0)
 gameExit = False
 isGameStarted = False
-
+SNAKE_WIDTH = 12
+SNAKE_HEIGHT = 12
 threadQeue = Queue.Queue()
 
 
@@ -197,7 +198,10 @@ while not gameExit:
 
         for i in range(0, len(player)):
             for j in range(0, len(player[i]['body'])):
-                pygame.draw.rect(gameDisplay, player[i]['color'], [player[i]['body'][j]['x'], player[i]['body'][j]['y'], player[i]['body'][j]['width'], player[i]['body'][j]['height']])
+                pygame.draw.rect(gameDisplay, GREEN, [player[i]['body'][j]['x'], player[i]['body'][j]['y'], 12,12])
+
+            # pygame.draw.rect(gameDisplay, player[i]['eyeColor'], [player[i]['eyes'][0]['x'], player[i]['eyes'][0]['y'], player[i]['eyes'][0]['width'], player[i]['eyes'][0]['height']])
+            # pygame.draw.rect(gameDisplay, player[i]['eyeColor'], [player[i]['eyes'][1]['x'], player[i]['eyes'][1]['y'], player[i]['eyes'][1]['width'], player[i]['eyes'][1]['height']])
 
             if i == 0:
                 messege_to_secreen('GREEN SNAKE : ' + (str(player[i]['points'])), WHITE, 'bottom', 'left')
