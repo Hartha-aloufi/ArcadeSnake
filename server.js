@@ -40,15 +40,21 @@ io.on('connection', function(socket){
 	socket.on('create new player', function(){
 		connection.push(socket);
 
-		var color;
-		if(connection.length == 1)
+		var color, eyeColor;
+		if(connection.length == 1){
 			color = GREEN;
-		else if(connection.length == 2)
+			eyeColor = BLACK;
+		}
+		else if(connection.length == 2){
 			color = BLACK;
-		else
+			eyeColor = GREEN;
+		}
+		else{
 			color = RED;
+			eyeColor = BLACK;
+		}
 
-		player.push(new Snake(color, 0, SNAKE_WIDTH, SNAKE_HEIGHT, player1_start_point,1));
+		player.push(new Snake(color, 0, SNAKE_WIDTH, SNAKE_HEIGHT, player1_start_point,1, eyeColor));
 
 	});
 
@@ -152,11 +158,13 @@ io.on('connection', function(socket){
 
 
 
-function Snake(color, points, width, height, start_point, direc){
+function Snake(color, points, width, height, start_point, direc, eyeColor){
 	// body[0] is the snake head
 
 
 	this.body = [new Rectangle(start_point[0], start_point[1], width, height)];
+	this.eyes = [new Rectangle(this.body[0].x + width - 5, this.body[0].y + height - 10), new Rectangle(this.body[0].x + width - 5, this.body[0].y + height - 5)];
+	this.eyeColor = eyeColor;
 	this.color = color;
 	this.points = points
 	this.direc = direc;
@@ -225,6 +233,11 @@ function Snake(color, points, width, height, start_point, direc){
 				return true;
 
 		return false;
+	}
+
+	this.updateSnakeEye = function(){
+		this.eyes = [new Rectangle(this.body[0].x + this.width - 5, this.body[0].y + this.height - 10), new Rectangle(this.body[0].x + this.width - 5, this.body[0].y + this.height - 5)];
+
 	}
 
 }

@@ -2,9 +2,9 @@ import pygame
 import sys
 from utility import *
 from socketIO_client import SocketIO, BaseNamespace
-import threading;
+import threading
 import time
-
+import Queue
 
 
 WHITE = (255,255,255)
@@ -15,6 +15,8 @@ SCREEN_HEIGHT = 600
 GREEN = (153, 204, 0)
 gameExit = False
 isGameStarted = False
+
+threadQeue = Queue.Queue()
 
 
 pygame.init()
@@ -100,33 +102,33 @@ class Namespace(BaseNamespace):
 
 
     def on_draw(self, *data):
-        global x
-        x += 1
-        player = data[0]['player']
-        food = data[0]['food']
-
-        gameDisplay.fill(SELVER)
-
-        for i in range(0, len(player)):
-            for j in range(0, len(player[i]['body'])):
-                pygame.draw.rect(gameDisplay, player[i]['color'], [player[i]['body'][j]['x'], player[i]['body'][j]['y'], player[i]['body'][j]['width'], player[i]['body'][j]['height']])
-
-            if i == 0:
-                messege_to_secreen('GREEN SNAKE : ' + (str(player[i]['points'])), WHITE, 'bottom', 'left')
-            elif(i == 1):
-                messege_to_secreen('BLACK SNAKE : ' + (str(player[i]['points'])), WHITE, 'bottom', 'right')
-            else :
-                messege_to_secreen('YELLOW SNAKE : ' + (str(player[i]['points'])), WHITE, 'bottom', 'center')
-
-
-
-        pygame.draw.rect(gameDisplay, food['color'], [food['rect']['x'], food['rect']['y'], food['rect']['width'], food['rect']['height']])
+        threadQeue.put(data)
+        # global x
+        # x += 1
+        # player = data[0]['player']
+        # food = data[0]['food']
+        #
+        # gameDisplay.fill(SELVER)
+        #
+        # for i in range(0, len(player)):
+        #     for j in range(0, len(player[i]['body'])):
+        #         pygame.draw.rect(gameDisplay, player[i]['color'], [player[i]['body'][j]['x'], player[i]['body'][j]['y'], player[i]['body'][j]['width'], player[i]['body'][j]['height']])
+        #
+        #     if i == 0:
+        #         messege_to_secreen('GREEN SNAKE : ' + (str(player[i]['points'])), WHITE, 'bottom', 'left')
+        #     elif(i == 1):
+        #         messege_to_secreen('BLACK SNAKE : ' + (str(player[i]['points'])), WHITE, 'bottom', 'right')
+        #     else :
+        #         messege_to_secreen('YELLOW SNAKE : ' + (str(player[i]['points'])), WHITE, 'bottom', 'center')
+        #
+        #
+        #
+        # pygame.draw.rect(gameDisplay, food['color'], [food['rect']['x'], food['rect']['y'], food['rect']['width'], food['rect']['height']])
 
 
 
 
 socketIO = SocketIO('localhost', 8080, Namespace)
-
 
 def net():
     socketIO.define(Namespace, "/")
@@ -183,6 +185,31 @@ while not gameExit:
 
     socketIO.emit('draw request', isGameStarted)
     clock.tick(15)
+    if not threadQeue.empty():
+        data = threadQeue.get()
+
+        global x
+        x += 1
+        player = data[0]['player']
+        food = data[0]['food']
+
+        gameDisplay.fill(SELVER)
+
+        for i in range(0, len(player)):
+            for j in range(0, len(player[i]['body'])):
+                pygame.draw.rect(gameDisplay, player[i]['color'], [player[i]['body'][j]['x'], player[i]['body'][j]['y'], player[i]['body'][j]['width'], player[i]['body'][j]['height']])
+
+            if i == 0:
+                messege_to_secreen('GREEN SNAKE : ' + (str(player[i]['points'])), WHITE, 'bottom', 'left')
+            elif(i == 1):
+                messege_to_secreen('BLACK SNAKE : ' + (str(player[i]['points'])), WHITE, 'bottom', 'right')
+            else :
+                messege_to_secreen('YELLOW SNAKE : ' + (str(player[i]['points'])), WHITE, 'bottom', 'center')
+
+
+
+        pygame.draw.rect(gameDisplay, food['color'], [food['rect']['x'], food['rect']['y'], food['rect']['width'], food['rect']['height']])
+
     pygame.display.update()
 
     if x == 2 :
