@@ -6,7 +6,7 @@ import threading
 import time
 import Queue
 
-
+BLACK = (0,0,0)
 WHITE = (255,255,255)
 SELVER = (140, 140, 140)
 RED = [255, 0 , 0]
@@ -15,8 +15,7 @@ SCREEN_HEIGHT = 600
 GREEN = (153, 204, 0)
 gameExit = False
 isGameStarted = False
-SNAKE_WIDTH = 12
-SNAKE_HEIGHT = 12
+
 threadQeue = Queue.Queue()
 
 
@@ -103,14 +102,18 @@ class Namespace(BaseNamespace):
 
 
     def on_draw(self, *data):
-        threadQeue.put(data)
-        # global x
-        # x += 1
-        # player = data[0]['player']
-        # food = data[0]['food']
-        #
-        # gameDisplay.fill(SELVER)
-        #
+        # threadQeue.put(data)
+        global x
+        x += 1
+        player1 = data[0]['player1']
+        player2 = data[0]['player2']
+        food = data[0]['food']
+
+        gameDisplay.fill(SELVER)
+        pygame.draw.rect(gameDisplay, GREEN, [player1[0], player1[1], 13,13])
+        pygame.draw.rect(gameDisplay, BLACK, [player2[0], player2[1], 13,13])
+        pygame.draw.rect(gameDisplay, RED, [food[0], food[1], 7,7])
+
         # for i in range(0, len(player)):
         #     for j in range(0, len(player[i]['body'])):
         #         pygame.draw.rect(gameDisplay, player[i]['color'], [player[i]['body'][j]['x'], player[i]['body'][j]['y'], player[i]['body'][j]['width'], player[i]['body'][j]['height']])
@@ -121,9 +124,9 @@ class Namespace(BaseNamespace):
         #         messege_to_secreen('BLACK SNAKE : ' + (str(player[i]['points'])), WHITE, 'bottom', 'right')
         #     else :
         #         messege_to_secreen('YELLOW SNAKE : ' + (str(player[i]['points'])), WHITE, 'bottom', 'center')
-        #
-        #
-        #
+
+
+
         # pygame.draw.rect(gameDisplay, food['color'], [food['rect']['x'], food['rect']['y'], food['rect']['width'], food['rect']['height']])
 
 
@@ -186,33 +189,30 @@ while not gameExit:
 
     socketIO.emit('draw request', isGameStarted)
     clock.tick(15)
-    if not threadQeue.empty():
-        data = threadQeue.get()
-
-        global x
-        x += 1
-        player = data[0]['player']
-        food = data[0]['food']
-
-        gameDisplay.fill(SELVER)
-
-        for i in range(0, len(player)):
-            for j in range(0, len(player[i]['body'])):
-                pygame.draw.rect(gameDisplay, GREEN, [player[i]['body'][j]['x'], player[i]['body'][j]['y'], 12,12])
-
-            # pygame.draw.rect(gameDisplay, player[i]['eyeColor'], [player[i]['eyes'][0]['x'], player[i]['eyes'][0]['y'], player[i]['eyes'][0]['width'], player[i]['eyes'][0]['height']])
-            # pygame.draw.rect(gameDisplay, player[i]['eyeColor'], [player[i]['eyes'][1]['x'], player[i]['eyes'][1]['y'], player[i]['eyes'][1]['width'], player[i]['eyes'][1]['height']])
-
-            if i == 0:
-                messege_to_secreen('GREEN SNAKE : ' + (str(player[i]['points'])), WHITE, 'bottom', 'left')
-            elif(i == 1):
-                messege_to_secreen('BLACK SNAKE : ' + (str(player[i]['points'])), WHITE, 'bottom', 'right')
-            else :
-                messege_to_secreen('YELLOW SNAKE : ' + (str(player[i]['points'])), WHITE, 'bottom', 'center')
-
-
-
-        pygame.draw.rect(gameDisplay, food['color'], [food['rect']['x'], food['rect']['y'], food['rect']['width'], food['rect']['height']])
+    # if not threadQeue.empty():
+    #     data = threadQeue.get()
+    #
+    #     global x
+    #     x += 1
+    #     player = data[0]['player']
+    #     food = data[0]['food']
+    #
+    #     gameDisplay.fill(SELVER)
+    #
+    #     for i in range(0, len(player)):
+    #         for j in range(0, len(player[i]['body'])):
+    #             pygame.draw.rect(gameDisplay, player[i]['color'], [player[i]['body'][j]['x'], player[i]['body'][j]['y'], player[i]['body'][j]['width'], player[i]['body'][j]['height']])
+    #
+    #         if i == 0:
+    #             messege_to_secreen('GREEN SNAKE : ' + (str(player[i]['points'])), WHITE, 'bottom', 'left')
+    #         elif(i == 1):
+    #             messege_to_secreen('BLACK SNAKE : ' + (str(player[i]['points'])), WHITE, 'bottom', 'right')
+    #         else :
+    #             messege_to_secreen('YELLOW SNAKE : ' + (str(player[i]['points'])), WHITE, 'bottom', 'center')
+    #
+    #
+    #
+    #     pygame.draw.rect(gameDisplay, food['color'], [food['rect']['x'], food['rect']['y'], food['rect']['width'], food['rect']['height']])
 
     pygame.display.update()
 

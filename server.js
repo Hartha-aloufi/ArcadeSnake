@@ -142,7 +142,7 @@ io.on('connection', function(socket){
 		}
 
 
-		io.emit('draw', {player : [player[0].body, player[1].body], food : food});
+		io.emit('draw', {player1 : [player[0].body[0].x, player[0].body[0].y],player2 : [player[1].body[0].x, player[1].body[0].y], food : [food.rect.x, food.rect.y]});
 
 
 		if(winner != -1){
@@ -181,7 +181,7 @@ function Snake(color, points, width, height, start_point, direc, eyeColor){
 
 	this.eat = function(){
 		this.points += 1;
-		this.body.push(new Rectangle(this.body[0].x, this.body[0].y));
+		this.body.push(new Rectangle(this.body[0].x, this.body[0].y, this.body[0].width, this.body[0].height));
 	}
 
 
