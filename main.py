@@ -6,21 +6,27 @@ import threading
 import time
 import Queue
 
+pygame.init()
+display_info = pygame.display.Info()
+
+SCREEN_WIDTH = display_info.current_w
+SCREEN_HEIGHT = display_info.current_h
+
 BLACK = (0,0,0)
+GREEN = (153, 204, 0)
 WHITE = (255,255,255)
 SELVER = (140, 140, 140)
 RED = [255, 0 , 0]
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
-GREEN = (153, 204, 0)
+SNAKE_HEIGHT = 13
+SNAKE_WIDTH = 13
+EYE_SIZE = 3
 gameExit = False
 isGameStarted = False
 
 threadQeue = Queue.Queue()
 
 
-pygame.init()
-gameDisplay = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+gameDisplay = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT),pygame.NOFRAME)
 pygame.display.set_caption('Hartha')
 clock = pygame.time.Clock()
 
@@ -97,7 +103,7 @@ class Namespace(BaseNamespace):
             messege_to_secreen('Waiting the other player to start the game', GREEN,'center', 'center', 'mid')
         else :
             messege_to_secreen('Press enter to start the game', GREEN,'bottom', 'center', 'mid')
-            messege_to_secreen('Arcade Snake Game', GREEN,'center', 'center', 'large')
+            messege_to_secreen('Arcade HACKATARI TEAM', GREEN,'center', 'center', 'large')
 
 
 
@@ -107,13 +113,76 @@ class Namespace(BaseNamespace):
         x += 1
         player1 = data[0]['player1']
         player2 = data[0]['player2']
+        player1Dir = data[0]['player1Dir']
+        player2Dir = data[0]['player2Dir']
+        player1Points = data[0]['player1Points']
+        player2Points = data[0]['player2Points']
+        player1Col = data[0]['player1Col']
+        player2Col = data[0]['player2Col']
         food = data[0]['food']
 
         gameDisplay.fill(SELVER)
-        pygame.draw.rect(gameDisplay, GREEN, [player1[0], player1[1], 13,13])
-        pygame.draw.rect(gameDisplay, BLACK, [player2[0], player2[1], 13,13])
+
+        # new Rectangle(this.body[0].x + width - 5, this.body[0].y + height - 10), new Rectangle(this.body[0].x + width - 5, this.body[0].y + height - 5)
+        global GREEN, BLACK
+
+        if player1Col :
+            GREEN = RED
+        i = 0
+        while(i < len(player1)-1):
+            pygame.draw.rect(gameDisplay, GREEN, [player1[i], player1[i+1], 13,13])
+            i = i + 2
+
+        GREEN = (153, 204, 0)
+
+        if player1Dir == 1 :
+            pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH - 5, player1[1] + SNAKE_HEIGHT - 10, 3, 3])
+            pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH - 5, player1[1] + SNAKE_HEIGHT - 5, 3, 3])
+
+        elif player1Dir == 2 :
+            pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH - 10, player1[1] + SNAKE_HEIGHT - 10, 3, 3])
+            pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH - 10, player1[1] + SNAKE_HEIGHT - 5, 3, 3])
+
+        elif player1Dir == 3 :
+            pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH - 10, player1[1] + SNAKE_HEIGHT - 10, 3, 3])
+            pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH - 5, player1[1] + SNAKE_HEIGHT - 10, 3, 3])
+
+        elif player1Dir == 4 :
+            pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH - 10, player1[1] + SNAKE_HEIGHT - 5, 3, 3])
+            pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH - 5, player1[1] + SNAKE_HEIGHT - 5, 3, 3])
+
+
+        if player2Col :
+            BLACK = RED
+
+        i = 0
+        while(i < len(player2) - 1) :
+            pygame.draw.rect(gameDisplay, BLACK, [player2[i], player2[i+1], 13,13])
+            i = i + 2
+
+        BLACK = (0,0,0)
+
+        if player2Dir == 1 :
+            pygame.draw.rect(gameDisplay, GREEN, [player2[0] + SNAKE_WIDTH - 5, player2[1] + SNAKE_HEIGHT - 10, 3, 3])
+            pygame.draw.rect(gameDisplay, GREEN, [player2[0] + SNAKE_WIDTH - 5, player2[1] + SNAKE_HEIGHT - 5, 3, 3])
+
+        elif player2Dir == 2 :
+            pygame.draw.rect(gameDisplay, GREEN, [player2[0] + SNAKE_WIDTH - 10, player2[1] + SNAKE_HEIGHT - 10, 3, 3])
+            pygame.draw.rect(gameDisplay, GREEN, [player2[0] + SNAKE_WIDTH - 10, player2[1] + SNAKE_HEIGHT - 5, 3, 3])
+
+        elif player2Dir == 3 :
+            pygame.draw.rect(gameDisplay, GREEN, [player2[0] + SNAKE_WIDTH - 10, player2[1] + SNAKE_HEIGHT - 10, 3, 3])
+            pygame.draw.rect(gameDisplay, GREEN, [player2[0] + SNAKE_WIDTH - 5, player2[1] + SNAKE_HEIGHT - 10, 3, 3])
+
+        elif player2Dir == 4 :
+            pygame.draw.rect(gameDisplay, GREEN, [player2[0] + SNAKE_WIDTH - 10, player2[1] + SNAKE_HEIGHT - 5, 3, 3])
+            pygame.draw.rect(gameDisplay, GREEN, [player2[0] + SNAKE_WIDTH - 5, player2[1] + SNAKE_HEIGHT - 5, 3, 3])
+
+
         pygame.draw.rect(gameDisplay, RED, [food[0], food[1], 7,7])
 
+        messege_to_secreen('GREEN SNAKE : ' + (str(player1Points)), WHITE, 'bottom', 'left')
+        messege_to_secreen('BLACK SNAKE : ' + (str(player2Points)), WHITE, 'bottom', 'right')
         # for i in range(0, len(player)):
         #     for j in range(0, len(player[i]['body'])):
         #         pygame.draw.rect(gameDisplay, player[i]['color'], [player[i]['body'][j]['x'], player[i]['body'][j]['y'], player[i]['body'][j]['width'], player[i]['body'][j]['height']])
@@ -165,7 +234,7 @@ while not gameExit:
             if not isGameStarted:
                 if event.key == pygame.K_RETURN:
                     isGameStarted = True
-                    socketIO.emit('create new player')
+                    socketIO.emit('create new player', SCREEN_WIDTH, SCREEN_HEIGHT)
 
                 elif event.key == pygame.K_p :
                     isGameStarted = True
@@ -188,7 +257,8 @@ while not gameExit:
 
 
     socketIO.emit('draw request', isGameStarted)
-    clock.tick(15)
+    clock.tick(10)
+
     # if not threadQeue.empty():
     #     data = threadQeue.get()
     #
@@ -217,7 +287,7 @@ while not gameExit:
     pygame.display.update()
 
     if x == 2 :
-        messege_to_secreen('Redy!!', GREEN, 'center', 'center', 'large')
+        messege_to_secreen('Rady!!', GREEN, 'center', 'center', 'large')
         pygame.display.update()
         time.sleep(2)
         gameDisplay.fill(SELVER)
