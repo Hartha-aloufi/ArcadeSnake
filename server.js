@@ -15,7 +15,7 @@ const SNAKE_HEIGHT = 12;
  SCREEN_WIDTH = 800;
  SCREEN_HEIGHT = 600;
 const player1_start_point = [10, 10];
-const player2_start_point = [780, 580];
+const player2_start_point = [10, 50];
 const SPEED = 12;
 const numberOfPoiintsToWin = 10;
 
@@ -42,21 +42,24 @@ io.on('connection', function(socket){
 		SCREEN_WIDTH = x;
 		SCREEN_HEIGHT = y;
 
-		var color, eyeColor;
+
+		var color, eyeColor, start_point;
 		if(connection.length == 1){
 			color = GREEN;
 			eyeColor = BLACK;
+			start_point = player1_start_point
 		}
 		else if(connection.length == 2){
 			color = BLACK;
 			eyeColor = GREEN;
+			start_point = player2_start_point
 		}
 		else{
 			color = RED;
 			eyeColor = BLACK;
 		}
 
-		player.push(new Snake(color, 0, SNAKE_WIDTH, SNAKE_HEIGHT, player1_start_point,1, eyeColor));
+		player.push(new Snake(color, 0, SNAKE_WIDTH, SNAKE_HEIGHT, start_point,1, eyeColor));
 
 	});
 
