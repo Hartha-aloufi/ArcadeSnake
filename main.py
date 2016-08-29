@@ -157,14 +157,15 @@ while intro :
 # single player
 if playMode == 1 :
     player1_start_point = (20, 20)
-    SPEED = 10
+    SPEED = 13
 
     player1 = Snake(GREEN, 0, SNAKE_WIDTH, SNAKE_HEIGHT, player1_start_point, 1)
+    hartha = Snake(BLACK, 0, SNAKE_WIDTH, SNAKE_HEIGHT, (50,50), 1)
+
     food = Food(SCREEN_WIDTH, SCREEN_HEIGHT, RED)
     gameExit = False
 
     while not gameExit:
-        speed = 10
 
         for event in pygame.event.get() :
             if event.type == pygame.QUIT :
@@ -207,6 +208,16 @@ if playMode == 1 :
 
         pygame.draw.rect(gameDisplay, BLACK, [player1.eyes[0].x, player1.eyes[0].y, player1.eyes[0].width, player1.eyes[0].height])
         pygame.draw.rect(gameDisplay, BLACK, [player1.eyes[1].x, player1.eyes[1].y, player1.eyes[1].width, player1.eyes[1].height])
+
+        hartha.move(food)
+        hartha.move_head(SPEED, SCREEN_WIDTH, SCREEN_HEIGHT)
+
+        if hartha.can_eat(food) :
+            hartha.eat()
+            food.calc_new_pos()
+
+        for i in range(0, len(hartha.body)) :
+            pygame.draw.rect(gameDisplay, hartha.color, [hartha.body[i].x, hartha.body[i].y, SNAKE_WIDTH, SNAKE_HEIGHT])
 
         pygame.draw.rect(gameDisplay, food.color, [food.rect.x, food.rect.y, food.rect.width, food.rect.height])
         pygame.display.update()

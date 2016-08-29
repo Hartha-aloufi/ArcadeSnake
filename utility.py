@@ -98,6 +98,32 @@ class Snake:
                         Rectangle(self.body[0].x + self.body[0].width / 4.3 , self.body[0].y + self.body[0].height / 1.62, 3, 3)]
 
 
+    # AI
+    def move(self, food):
+        if food.rect.x - self.body[0].x > self.body[0].width :
+            if self.direc == 2 :
+                self.direc = 3
+            else :
+                self.direc = 1
+
+        elif food.rect.x - self.body[0].x < -self.body[0].width :
+            if self.direc == 1:
+                self.direc = 4
+            else:
+                self.direc = 2
+
+        elif food.rect.y - self.body[0].y > self.body[0].height :
+            if self.direc == 3:
+                self.direc = 1
+            else:
+                self.direc = 4
+
+        elif food.rect.y - self.body[0].y < -self.body[0].height:
+            if self.direc == 4:
+                self.direc = 2
+            else:
+                self.direc = 3
+
 
 class Rectangle:
     def __init__(self, x, y, width, height):
