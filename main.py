@@ -73,7 +73,7 @@ if RASP:
 
 
 gameDisplay = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT),pygame.NOFRAME)
-pygame.display.set_caption('')
+pygame.display.set_caption('Hartha')
 clock = pygame.time.Clock()
 
 
@@ -258,7 +258,6 @@ class Namespace(BaseNamespace):
         # threadQeue.put(data)
         global x
         x += 1
-
         player1 = data[0]['player1']
         player2 = data[0]['player2']
         player1Dir = data[0]['player1Dir']
@@ -397,6 +396,27 @@ try:
                 socketIO.emit('changeDirction', 4)
                 state = 4;
                 pass;
+        #
+        # for event in pygame.event.get() :
+        #     if event.type == pygame.QUIT :
+        #         gameExit = True
+        #
+        #     elif event.type == pygame.KEYDOWN :
+        #
+        #     if not GPIO.input(in1) and not state == 1:
+        #         socketIO.emit('changeDirction', 1)
+        #         state = 1;
+        #         pass;
+        #
+        #     elif not GPIO.input(in2) and not state == 2:
+        #         socketIO.emit('changeDirction', 2)
+        #         state = 2;
+        #         pass;
+
+    for event in pygame.event.get() :
+        if event.type == pygame.QUIT :
+            gameExit = True
+
 
         for event in pygame.event.get() :
             if event.type == pygame.QUIT :
@@ -457,6 +477,7 @@ try:
     #     pygame.draw.rect(gameDisplay, food['color'], [food['rect']['x'], food['rect']['y'], food['rect']['width'], food['rect']['height']])
 
         pygame.display.update()
+
         if x == 2 :
             messege_to_secreen('Ready!!', GREEN, 'center', 'center', 'large')
             pygame.display.update()
@@ -473,8 +494,6 @@ except KeyboardInterrupt:
 
 socketIO.emit('disconnect')
 
-if RASP:
-    GPIO.cleanup();
-
+socketIO.emit('disconnect')
 pygame.quit()
 sys.exit()
