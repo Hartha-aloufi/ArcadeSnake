@@ -10,7 +10,14 @@ class Snake:
         self.points = points
         self.direc = direc
         self.eyes = [Rectangle(self.body[0].x + width/1.25, self.body[0].y + height/2.5, 3, 3),Rectangle(self.body[0].x + width/1.25, self.body[0].y + height/1.25, 3, 3)]
+        self.error_x = 0
+        self.error_y = 0
+        self.error_handler = 0
+        self.vFood = Food(1000,1000,(0,0,0))
 
+    def re_init() :
+        self.points = 0
+        self.body = [Rectangle(self.body[0].x, self.body[0].y, self.body[0].width, self.body[0].height)]
 
     def can_eat(self, food) :
         # collision detection
@@ -100,29 +107,52 @@ class Snake:
 
     # AI
     def move(self, food):
-        if food.rect.x - self.body[0].x > self.body[0].width :
+        self.error_handler += 1
+
+        if self.error_handler == 50:
+            self.error_x = randint(-200,200)
+            self.error_y = randint(-200,200)
+            self.error_handler = 0
+            self.vFood.rect.x = food.rect.x + self.error_x
+            self.vFood.rect.y = food.rect.y + self.error_y
+
+        elif self.can_eat(self.vFood) :
+            self.error_y = 0
+            self.error_x = 0
+
+
+
+        if food.rect.x + self.error_x - self.body[0].x > self.body[0].width :
             if self.direc == 2 :
                 self.direc = 3
             else :
                 self.direc = 1
 
-        elif food.rect.x - self.body[0].x < -self.body[0].width :
+        elif food.rect.x + self.error_x - self.body[0].x < -self.body[0].width :
             if self.direc == 1:
                 self.direc = 4
             else:
                 self.direc = 2
 
-        elif food.rect.y - self.body[0].y > self.body[0].height :
+        elif food.rect.y + self.error_y - self.body[0].y > self.body[0].height :
             if self.direc == 3:
                 self.direc = 1
             else:
                 self.direc = 4
 
-        elif food.rect.y - self.body[0].y < -self.body[0].height:
+        elif food.rect.y + self.error_y - self.body[0].y < -self.body[0].height:
             if self.direc == 4:
                 self.direc = 2
             else:
                 self.direc = 3
+
+        # self.error_handler += 1
+        #
+        # if self.error_handler == 10 :
+        #     random_numer = randint(0, 20)
+        #
+        #     if random_numer % 2 == 0:
+        #         self.direc = randint(1, 4)
 
 
 class Rectangle:

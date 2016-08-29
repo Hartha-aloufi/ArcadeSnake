@@ -30,6 +30,7 @@ SNAKE_WIDTH = 13
 EYE_SIZE = 3
 gameExit = False
 isGameStarted = False
+SPEED = 13
 
 # threadQeue = Queue.Queue()
 
@@ -116,6 +117,9 @@ def messege_to_secreen(msg, color, posV, posH, size = 'small'):
 intro = True
 playMode = 1
 
+puse_mode_snake = Snake(BLACK, 0, SNAKE_WIDTH, SNAKE_HEIGHT, (50,50), 1)
+puse_mode_food = Food(SCREEN_WIDTH, SCREEN_HEIGHT, RED)
+
 while intro :
 
     gameDisplay.fill(WHITE)
@@ -151,13 +155,35 @@ while intro :
 
     gameDisplay.blit(textSurface, rect)
 
+    messege_to_secreen('Arcade HACKATARI TEAM', GREEN,'center', 'center', 'large')
+
+
+    puse_mode_snake.move(puse_mode_food)
+    puse_mode_snake.move_head(SPEED, SCREEN_WIDTH, SCREEN_HEIGHT)
+
+    if puse_mode_snake.can_eat(puse_mode_food) :
+        puse_mode_snake.eat()
+        puse_mode_food.calc_new_pos()
+
+        if puse_mode_snake.points == 50 :
+            puse_mode_snake.reinit()
+
+    for i in range(0, len(puse_mode_snake.body)) :
+        pygame.draw.rect(gameDisplay, puse_mode_snake.color, [puse_mode_snake.body[i].x, puse_mode_snake.body[i].y, SNAKE_WIDTH, SNAKE_HEIGHT])
+
+
+    pygame.draw.rect(gameDisplay, GREEN, [puse_mode_snake.eyes[0].x, puse_mode_snake.eyes[0].y, puse_mode_snake.eyes[0].width, puse_mode_snake.eyes[0].height])
+    pygame.draw.rect(gameDisplay, GREEN, [puse_mode_snake.eyes[1].x, puse_mode_snake.eyes[1].y, puse_mode_snake.eyes[1].width, puse_mode_snake.eyes[1].height])
+
+    pygame.draw.rect(gameDisplay, puse_mode_food.color, [puse_mode_food.rect.x, puse_mode_food.rect.y, puse_mode_food.rect.width, puse_mode_food.rect.height])
+
     pygame.display.update()
+    clock.tick(30)
 
 
 # single player
 if playMode == 1 :
     player1_start_point = (20, 20)
-    SPEED = 13
 
     player1 = Snake(GREEN, 0, SNAKE_WIDTH, SNAKE_HEIGHT, player1_start_point, 1)
     hartha = Snake(BLACK, 0, SNAKE_WIDTH, SNAKE_HEIGHT, (50,50), 1)
@@ -209,6 +235,7 @@ if playMode == 1 :
         pygame.draw.rect(gameDisplay, BLACK, [player1.eyes[0].x, player1.eyes[0].y, player1.eyes[0].width, player1.eyes[0].height])
         pygame.draw.rect(gameDisplay, BLACK, [player1.eyes[1].x, player1.eyes[1].y, player1.eyes[1].width, player1.eyes[1].height])
 
+
         hartha.move(food)
         hartha.move_head(SPEED, SCREEN_WIDTH, SCREEN_HEIGHT)
 
@@ -219,7 +246,17 @@ if playMode == 1 :
         for i in range(0, len(hartha.body)) :
             pygame.draw.rect(gameDisplay, hartha.color, [hartha.body[i].x, hartha.body[i].y, SNAKE_WIDTH, SNAKE_HEIGHT])
 
+
+        pygame.draw.rect(gameDisplay, GREEN, [hartha.eyes[0].x, hartha.eyes[0].y, hartha.eyes[0].width, hartha.eyes[0].height])
+        pygame.draw.rect(gameDisplay, GREEN, [hartha.eyes[1].x, hartha.eyes[1].y, hartha.eyes[1].width, hartha.eyes[1].height])
+
         pygame.draw.rect(gameDisplay, food.color, [food.rect.x, food.rect.y, food.rect.width, food.rect.height])
+
+
+
+        messege_to_secreen('GREEN SNAKE : ' + (str(player1.points)), WHITE, 'bottom', 'left')
+        messege_to_secreen('BLACK SNAKE : ' + (str(hartha.points)), WHITE, 'bottom', 'right')
+
         pygame.display.update()
         clock.tick(30)
 
