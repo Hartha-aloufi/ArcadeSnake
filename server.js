@@ -16,7 +16,7 @@ const SNAKE_HEIGHT = 12;
  SCREEN_HEIGHT = 600;
 const player1_start_point = [10, 10];
 const player2_start_point = [10, 50];
-const SPEED = 12;
+const SPEED = 20;
 const numberOfPoiintsToWin = 10;
 
 server.listen(8080);
@@ -42,6 +42,7 @@ io.on('connection', function(socket){
 		SCREEN_WIDTH = x;
 		SCREEN_HEIGHT = y;
 
+		console.log(connection.length);
 
 		var color, eyeColor, start_point;
 		if(connection.length == 1){
@@ -87,7 +88,6 @@ io.on('connection', function(socket){
 	});
 
 	socket.on('draw request', function(isGameStarted){
-
 		if(player.length < 2 || !isGameStarted){
 			socket.emit('before start the game');
 			return;
@@ -107,9 +107,8 @@ io.on('connection', function(socket){
 							player[i].color = RED;
 							//game over
 					} else {
-						for (var j = 0; j < player.length; j++) {
-							if(i == j)
-								continue;
+						for (var j = 0; j < player.length; j++) if(j != i){
+
 							if(player[i].detect_collision_with_other_player(player[j])){
 								player[i].color = RED;
 								if(player[i].points != 0){
@@ -239,7 +238,7 @@ function Snake(color, points, width, height, start_point, direc, eyeColor){
 
 
 	this.detect_collision_with_other_player = function(other){
-		for(var i = 0 ; i < other.body.length; i++){
+		for(var i = 1 ; i < other.body.length; i++){
 			if (this.body[0].x < other.body[i].x + other.body[i].width &&  this.body[0].x + this.body[0].width > other.body[i].x && this.body[0].y < other.body[i].y + other.body[i].height && this.body[0].height + this.body[0].y > other.body[i].y)
 				return true;
 		}
@@ -274,7 +273,7 @@ function Food(screen_width, screen_height, color){
 	this.screen_width = screen_width;
 	this.screen_height = screen_height;
 	this.color = color;
-	this.rect = new Rectangle(50,50,7,7);
+	this.rect = new Rectangle(50,50,18,18);
 
 
 	this.calc_new_pos = function(){

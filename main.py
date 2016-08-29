@@ -6,6 +6,12 @@ import threading
 import time
 import Queue
 
+RASP = 0
+
+if(RASP):
+    import RPi.GPIO as GPIO
+
+
 pygame.init()
 display_info = pygame.display.Info()
 
@@ -14,20 +20,60 @@ SCREEN_HEIGHT = display_info.current_h
 
 BLACK = (0,0,0)
 GREEN = (153, 204, 0)
+DARK_GREEN = (0, 255, 0)
 WHITE = (255,255,255)
 SELVER = (140, 140, 140)
 RED = [255, 0 , 0]
+DARK_RED = (177, 0, 0)
 SNAKE_HEIGHT = 13
 SNAKE_WIDTH = 13
 EYE_SIZE = 3
 gameExit = False
 isGameStarted = False
 
-threadQeue = Queue.Queue()
+# threadQeue = Queue.Queue()
+
+if RASP:
+    GPIO.setmode(GPIO.BOARD);
+
+# out1 = 31;
+# out2 = 11;
+# out3 = 35;
+# out4 = 37;
+
+in1 = 35;
+in2 = 36
+in3 = 37;
+in4 = 38;
+
+
+# GPIO.setup(out1, GPIO.OUT);
+# GPIO.setup(out2, GPIO.OUT);
+# GPIO.setup(out3, GPIO.OUT);
+# GPIO.setup(out4, GPIO.OUT);
+
+# GPIO.output(out1, True);
+# GPIO.output(out2, True);
+# GPIO.output(out3, True);
+# GPIO.output(out4, True);
+
+if RASP:
+    # GPIO.setup(in1, GPIO.IN);
+    GPIO.setup(in1, GPIO.IN, pull_up_down=GPIO.PUD_UP);
+    # GPIO.setup(in2, GPIO.IN);
+    GPIO.setup(in2, GPIO.IN, pull_up_down=GPIO.PUD_UP);
+    # GPIO.setup(in3, GPIO.IN);
+    GPIO.setup(in3, GPIO.IN, pull_up_down=GPIO.PUD_UP);
+    # GPIO.setup(in4, GPIO.IN);
+    GPIO.setup(in4, GPIO.IN, pull_up_down=GPIO.PUD_UP);
+
+
+
+
 
 
 gameDisplay = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT),pygame.NOFRAME)
-pygame.display.set_caption('Hartha')
+pygame.display.set_caption('')
 clock = pygame.time.Clock()
 
 
@@ -67,6 +113,107 @@ def messege_to_secreen(msg, color, posV, posH, size = 'small'):
     textRect.center = h, v
     gameDisplay.blit(textSurf, textRect)
 
+intro = True
+playMode = 1
+
+while intro :
+
+    gameDisplay.fill(WHITE)
+
+    for event in pygame.event.get() :
+        if event.type == pygame.KEYDOWN :
+            if event.key == pygame.K_LEFT :
+                playMode = 1
+            elif event.key == pygame.K_RIGHT :
+                playMode = 2
+            elif event.key == pygame.K_RETURN:
+                intro = False
+
+    if playMode == 1 :
+        pygame.draw.rect(gameDisplay, RED, [SCREEN_WIDTH /6, SCREEN_HEIGHT/1.5, SCREEN_WIDTH / 4, SCREEN_HEIGHT / 8])
+    else :
+        pygame.draw.rect(gameDisplay, DARK_RED, [SCREEN_WIDTH /6, SCREEN_HEIGHT/1.5,  SCREEN_WIDTH / 4, SCREEN_HEIGHT / 8])
+
+    if playMode == 2 :
+        pygame.draw.rect(gameDisplay, DARK_GREEN, [SCREEN_WIDTH / 2, SCREEN_HEIGHT / 1.5,  SCREEN_WIDTH / 4, SCREEN_HEIGHT / 8])
+    else :
+        pygame.draw.rect(gameDisplay, GREEN, [SCREEN_WIDTH / 2,  SCREEN_HEIGHT / 1.5,  SCREEN_WIDTH / 4, SCREEN_HEIGHT / 8])
+
+    textSurface = mid_font.render('Single player', True, WHITE)
+    rect = textSurface.get_rect()
+    rect.center = SCREEN_WIDTH / 6 + 140, SCREEN_HEIGHT / 1.5 + 46
+
+    gameDisplay.blit(textSurface, rect)
+
+    textSurface = mid_font.render('Tow players', True, WHITE)
+    rect = textSurface.get_rect()
+    rect.center = SCREEN_WIDTH / 2 + 140, SCREEN_HEIGHT / 1.5 + 46
+
+    gameDisplay.blit(textSurface, rect)
+
+    pygame.display.update()
+
+
+# single player
+if playMode == 1 :
+    player1_start_point = (20, 20)
+    SPEED = 10
+
+    player1 = Snake(GREEN, 0, SNAKE_WIDTH, SNAKE_HEIGHT, player1_start_point, 1)
+    food = Food(SCREEN_WIDTH, SCREEN_HEIGHT, RED)
+    gameExit = False
+
+    while not gameExit:
+        speed = 10
+
+        for event in pygame.event.get() :
+            if event.type == pygame.QUIT :
+                gameExit = True
+
+            elif event.type == pygame.KEYDOWN :
+
+                if event.key == pygame.K_RIGHT :
+                    if player1.direc != 2 :
+                        player1.direc = 1
+
+                elif event.key == pygame.K_LEFT :
+                    if player1.direc != 1 :
+                        player1.direc = 2
+
+                elif event.key == pygame.K_UP :
+                    if player1.direc != 4 :
+                        player1.direc = 3
+
+                elif event.key == pygame.K_DOWN :
+                    if player1.direc != 3 :
+                        player1.direc = 4
+
+                player1.update_snake_eyes()
+
+        gameDisplay.fill(SELVER)
+
+        if player1.move_head(SPEED, SCREEN_WIDTH, SCREEN_HEIGHT):
+            if player1.detect_self_collision() :
+                player1.color = RED
+            else :
+                player1.color = GREEN
+
+        if player1.can_eat(food) :
+            player1.eat()
+            food.calc_new_pos()
+
+        for i in range(0, len(player1.body)) :
+            pygame.draw.rect(gameDisplay, player1.color, [player1.body[i].x, player1.body[i].y, SNAKE_WIDTH, SNAKE_HEIGHT])
+
+        pygame.draw.rect(gameDisplay, BLACK, [player1.eyes[0].x, player1.eyes[0].y, player1.eyes[0].width, player1.eyes[0].height])
+        pygame.draw.rect(gameDisplay, BLACK, [player1.eyes[1].x, player1.eyes[1].y, player1.eyes[1].width, player1.eyes[1].height])
+
+        pygame.draw.rect(gameDisplay, food.color, [food.rect.x, food.rect.y, food.rect.width, food.rect.height])
+        pygame.display.update()
+        clock.tick(30)
+
+    pygame.quit()
+    sys.exit()
 
 x = 0
 
@@ -111,6 +258,7 @@ class Namespace(BaseNamespace):
         # threadQeue.put(data)
         global x
         x += 1
+
         player1 = data[0]['player1']
         player2 = data[0]['player2']
         player1Dir = data[0]['player1Dir']
@@ -192,7 +340,7 @@ class Namespace(BaseNamespace):
         #     elif(i == 1):
         #         messege_to_secreen('BLACK SNAKE : ' + (str(player[i]['points'])), WHITE, 'bottom', 'right')
         #     else :
-        #         messege_to_secreen('YELLOW SNAKE : ' + (str(player[i]['points'])), WHITE, 'bottom', 'center')
+        #         messege_to_secreen('YELLOW SNAKE : ' + (str(player[i]['points])), WHITE, 'bottom', 'center')
 
 
 
@@ -220,44 +368,68 @@ netThread = threading.Thread(target=net)
 netThread.start()
 
 
+state = 1;
+try:
+    while not gameExit:
+        # input = GPIO.input(in1);
+        # print(GPIO.input(in1));
+        # if input:
+        #     print("INNNNNNPUT");
 
+        if RASP:
 
+            if not GPIO.input(in1) and not state == 1:
+                socketIO.emit('changeDirction', 1)
+                state = 1;
+                pass;
 
-while not gameExit:
+            elif not GPIO.input(in2) and not state == 2:
+                socketIO.emit('changeDirction', 2)
+                state = 2;
+                pass;
 
-    for event in pygame.event.get() :
-        if event.type == pygame.QUIT :
-            gameExit = True
+            elif not GPIO.input(in3) and not state == 3:
+                socketIO.emit('changeDirction', 3);
+                state = 3;
+                pass;
 
-        elif event.type == pygame.KEYDOWN :
+            elif not GPIO.input(in4) and not state == 4:
+                socketIO.emit('changeDirction', 4)
+                state = 4;
+                pass;
 
-            if not isGameStarted:
-                if event.key == pygame.K_RETURN:
-                    isGameStarted = True
-                    socketIO.emit('create new player', SCREEN_WIDTH, SCREEN_HEIGHT)
+        for event in pygame.event.get() :
+            if event.type == pygame.QUIT :
+                gameExit = True
 
-                elif event.key == pygame.K_p :
-                    isGameStarted = True
+            elif event.type == pygame.KEYDOWN :
 
-            else :
-                if event.key == pygame.K_RIGHT :
-                    socketIO.emit('changeDirction', 1)
-                    pass;
+                if not isGameStarted:
+                    if event.key == pygame.K_RETURN:
+                        isGameStarted = True
+                        socketIO.emit('create new player', SCREEN_WIDTH, SCREEN_HEIGHT)
 
-                elif event.key == pygame.K_LEFT :
-                    socketIO.emit('changeDirction', 2)
-                    pass;
-                elif event.key == pygame.K_UP :
-                    socketIO.emit('changeDirction', 3)
-                    pass;
+                    elif event.key == pygame.K_p :
+                        isGameStarted = True
 
-                elif event.key == pygame.K_DOWN :
-                    socketIO.emit('changeDirction', 4)
-                    pass;
+                else :
+                    if event.key == pygame.K_RIGHT :
+                        socketIO.emit('changeDirction', 1)
+                        pass;
 
+                    elif event.key == pygame.K_LEFT :
+                         socketIO.emit('changeDirction', 2)
+                         pass;
+                    elif event.key == pygame.K_UP :
+                        socketIO.emit('changeDirction', 3)
+                        pass;
 
-    socketIO.emit('draw request', isGameStarted)
-    clock.tick(10)
+                    elif event.key == pygame.K_DOWN :
+                        socketIO.emit('changeDirction', 4)
+                        pass;
+
+        socketIO.emit('draw request', isGameStarted)
+        clock.tick(10)
 
     # if not threadQeue.empty():
     #     data = threadQeue.get()
@@ -284,19 +456,25 @@ while not gameExit:
     #
     #     pygame.draw.rect(gameDisplay, food['color'], [food['rect']['x'], food['rect']['y'], food['rect']['width'], food['rect']['height']])
 
-    pygame.display.update()
-
-    if x == 2 :
-        messege_to_secreen('Rady!!', GREEN, 'center', 'center', 'large')
         pygame.display.update()
-        time.sleep(2)
-        gameDisplay.fill(SELVER)
-        messege_to_secreen('GO!!', GREEN, 'center', 'center', 'large')
-        pygame.display.update()
-        time.sleep(0.24)
-        x+=1
-
+        if x == 2 :
+            messege_to_secreen('Ready!!', GREEN, 'center', 'center', 'large')
+            pygame.display.update()
+            time.sleep(2)
+            gameDisplay.fill(SELVER)
+            messege_to_secreen('GO!!', GREEN, 'center', 'center', 'large')
+            pygame.display.update()
+            time.sleep(0.24)
+            x+=1
+except KeyboardInterrupt:
+    print("cleaning up");
+    if RASP:
+        GPIO.cleanup();
 
 socketIO.emit('disconnect')
+
+if RASP:
+    GPIO.cleanup();
+
 pygame.quit()
 sys.exit()
