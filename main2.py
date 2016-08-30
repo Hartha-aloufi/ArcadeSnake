@@ -16,7 +16,7 @@ pygame.init()
 display_info = pygame.display.Info()
 
 SCREEN_WIDTH = display_info.current_w
-SCREEN_HEIGHT = display_info.current_h - 64;
+SCREEN_HEIGHT = display_info.current_h - 64
 
 BLACK = (0,0,0)
 GREEN = (153, 204, 0)
@@ -25,9 +25,9 @@ WHITE = (255,255,255)
 SELVER = (140, 140, 140)
 RED = [255, 0 , 0]
 DARK_RED = (177, 0, 0)
-SNAKE_HEIGHT = h(13)
-SNAKE_WIDTH = w(13)
-#EYE_SIZE = 3
+SNAKE_HEIGHT = 13
+SNAKE_WIDTH = 13
+EYE_SIZE = 3
 gameExit = False
 isGameStarted = False
 SPEED = 13
@@ -95,23 +95,23 @@ def text_objects(text, color, size):
 
 def messege_to_secreen(msg, color, posV, posH, size = 'small'):
     textSurf, textRect = text_objects(msg, color, size)
-    x,y =0,0
+    v,h =0,0
 
     if posV == 'top':
-        x = h(20)
+        v = 20
     elif posV == 'bottom' :
-        x = SCREEN_HEIGHT - h(20)
+        v = SCREEN_HEIGHT - 20
     elif posV == 'center' :
-        x = SCREEN_HEIGHT / 2
+        v = SCREEN_HEIGHT / 2
 
     if posH == 'right':
-        y = w(50)
+        h = 50
     elif posH == 'left':
-        y = SCREEN_WIDTH - w(50)
+        h = SCREEN_WIDTH - 50
     elif posH == 'center':
-        y = SCREEN_WIDTH / 2
+        h = SCREEN_WIDTH / 2
 
-    textRect.center = y, x
+    textRect.center = h, v
     gameDisplay.blit(textSurf, textRect)
 
 playMode = 1
@@ -120,7 +120,7 @@ def intro_menu():
     global playMode
     intro = True
 
-    puse_mode_snake = Snake(BLACK, 0, SNAKE_WIDTH, SNAKE_HEIGHT, (w(50),h(50)), 1)
+    puse_mode_snake = Snake(BLACK, 0, SNAKE_WIDTH, SNAKE_HEIGHT, (50,50), 1)
     puse_mode_food = Food(SCREEN_WIDTH, SCREEN_HEIGHT, RED)
 
     while intro :
@@ -148,13 +148,13 @@ def intro_menu():
 
         textSurface = mid_font.render('Single player', True, WHITE)
         rect = textSurface.get_rect()
-        rect.center = SCREEN_WIDTH / 6 + w(140), SCREEN_HEIGHT / 1.5 + h(46)
+        rect.center = SCREEN_WIDTH / 6 + 140, SCREEN_HEIGHT / 1.5 + 46
 
         gameDisplay.blit(textSurface, rect)
 
-        textSurface = mid_font.render('Two players', True, WHITE)
+        textSurface = mid_font.render('Tow players', True, WHITE)
         rect = textSurface.get_rect()
-        rect.center = SCREEN_WIDTH / 2 + w(140), SCREEN_HEIGHT / 1.5 + h(46)
+        rect.center = SCREEN_WIDTH / 2 + 140, SCREEN_HEIGHT / 1.5 + 46
 
         gameDisplay.blit(textSurface, rect)
 
@@ -169,7 +169,7 @@ def intro_menu():
             puse_mode_food.calc_new_pos()
 
             if puse_mode_snake.points == 50 :
-                puse_mode_snake.re_init((w(20),h(20)))
+                puse_mode_snake.re_init((20,20))
 
         for i in range(0, len(puse_mode_snake.body)) :
             pygame.draw.rect(gameDisplay, puse_mode_snake.color, [puse_mode_snake.body[i].x, puse_mode_snake.body[i].y, SNAKE_WIDTH, SNAKE_HEIGHT])
@@ -191,8 +191,8 @@ intro_menu()
 
 # single player
 if playMode == 1 :
-    player1_start_point = (w(20), h(20))
-    hartha_start_point = (w(20), h(50))
+    player1_start_point = (20, 20)
+    hartha_start_point = (20, 50)
     player1 = Snake(GREEN, 0, SNAKE_WIDTH, SNAKE_HEIGHT, player1_start_point, 1)
     hartha = Snake(BLACK, 0, SNAKE_WIDTH, SNAKE_HEIGHT, hartha_start_point, 1)
 
