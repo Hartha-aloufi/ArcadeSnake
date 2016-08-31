@@ -5,11 +5,16 @@ from socketIO_client import SocketIO, BaseNamespace
 import threading
 import time
 import Queue
+from Food import Food;
+from Snake import Snake;
+
+
 
 RASP = 0
 
 if(RASP):
-    import RPi.GPIO as GPIO
+    # import RPi.GPIO as GPIO
+    from raspinput import Rasp;
 
 
 pygame.init()
@@ -37,18 +42,15 @@ SPEED = 13
 
 # threadQeue = Queue.Queue()
 
-if RASP:
-    GPIO.setmode(GPIO.BOARD);
+# if RASP:
+#     GPIO.setmode(GPIO.BOARD);
 
 # out1 = 31;
 # out2 = 11;
 # out3 = 35;
 # out4 = 37;
 
-in1 = 35;
-in2 = 36
-in3 = 37;
-in4 = 38;
+
 
 
 # GPIO.setup(out1, GPIO.OUT);
@@ -61,15 +63,15 @@ in4 = 38;
 # GPIO.output(out3, True);
 # GPIO.output(out4, True);
 
-if RASP:
-    # GPIO.setup(in1, GPIO.IN);
-    GPIO.setup(in1, GPIO.IN, pull_up_down=GPIO.PUD_UP);
-    # GPIO.setup(in2, GPIO.IN);
-    GPIO.setup(in2, GPIO.IN, pull_up_down=GPIO.PUD_UP);
-    # GPIO.setup(in3, GPIO.IN);
-    GPIO.setup(in3, GPIO.IN, pull_up_down=GPIO.PUD_UP);
-    # GPIO.setup(in4, GPIO.IN);
-    GPIO.setup(in4, GPIO.IN, pull_up_down=GPIO.PUD_UP);
+# if RASP:
+#     # GPIO.setup(in1, GPIO.IN);
+#     GPIO.setup(in1, GPIO.IN, pull_up_down=GPIO.PUD_UP);
+#     # GPIO.setup(in2, GPIO.IN);
+#     GPIO.setup(in2, GPIO.IN, pull_up_down=GPIO.PUD_UP);
+#     # GPIO.setup(in3, GPIO.IN);
+#     GPIO.setup(in3, GPIO.IN, pull_up_down=GPIO.PUD_UP);
+#     # GPIO.setup(in4, GPIO.IN);
+#     GPIO.setup(in4, GPIO.IN, pull_up_down=GPIO.PUD_UP);
 
 
 
@@ -136,15 +138,18 @@ def intro_menu():
         gameDisplay.fill(WHITE)
 
         if RASP:
-            if not GPIO.input(in1): # and not state == 1:
+            # if not GPIO.input(in1): # and not state == 1:
+            if Rasp.input(Rasp.JRIGHT):
                 playMode = 2
                 pass;
 
-            elif not GPIO.input(in2): # and not state == 2:
+            # elif not GPIO.input(in2): # and not state == 2:
+            elif Rasp.input(Rasp.JLEFT):
                 playMode = 1
                 pass;
 
-            elif not GPIO.input(in3): # and not state == 3:
+            # elif not GPIO.input(in3): # and not state == 3:
+            elif RASP.input(RASP.JUP):
                 if playMode == 1:
                     intro = False
                     pass;
@@ -226,7 +231,8 @@ if playMode == 1 :
 
         if RASP:
 
-            if not GPIO.input(in1) and not state == 1:
+            # if not GPIO.input(in1) and not state == 1:
+            if Rasp.input(Rasp.JRIGHT) and not state == 1:
                 # socketIO.emit('changeDirction', 1)
 
                 # print("Input");
@@ -236,8 +242,9 @@ if playMode == 1 :
 
                 state = 1;
                 pass;
-
-            elif not GPIO.input(in2) and not state == 2:
+            
+            # elif not GPIO.input(in2) and not state == 2:
+            elif Rasp.input(Rasp.JLEFT) and not state == 2:
                 # socketIO.emit('changeDirction', 2)
 
                 if player1.direc != 1 :
@@ -246,7 +253,8 @@ if playMode == 1 :
                 state = 2;
                 pass;
 
-            elif not GPIO.input(in3) and not state == 3:
+            # elif not GPIO.input(in3) and not state == 3:
+            elif Rasp.input(Rasp.JUP) and not state == 3:
                 # socketIO.emit('changeDirction', 3);
 
                 if player1.direc != 4 :
@@ -255,7 +263,8 @@ if playMode == 1 :
                 state = 3;
                 pass;
 
-            elif not GPIO.input(in4) and not state == 4:
+            # elif not GPIO.input(in4) and not state == 4:
+            elif Rasp.input(Rasp.JDOWN) and not state == 4:
                 # socketIO.emit('changeDirction', 4)
 
                 if player1.direc != 3 :
@@ -481,7 +490,7 @@ class Namespace(BaseNamespace):
 
 
 
-socketIO = SocketIO('localhost', 8080, Namespace)
+socketIO = SocketIO('192.168.1.68', 8080, Namespace)
 
 def net():
     socketIO.define(Namespace, "/")
@@ -510,22 +519,27 @@ try:
 
         if RASP:
 
-            if not GPIO.input(in1) and not state == 1:
+            # if not GPIO.input(in1) and not state == 1:
+            if Rasp.input(Rasp.JRIGHT) and not state == 1:
                 socketIO.emit('changeDirction', 1)
                 state = 1;
                 pass;
 
-            elif not GPIO.input(in2) and not state == 2:
+            # elif not GPIO.input(in2) and not state == 2:
+            elif Rasp.input(Rasp.JLEFT) and not state == 2:
                 socketIO.emit('changeDirction', 2)
                 state = 2;
                 pass;
 
-            elif not GPIO.input(in3) and not state == 3:
+            # elif not GPIO.input(in3) and not state == 3:
+            elif Rasp.input(Rasp.JUP) and not state == 3:
                 socketIO.emit('changeDirction', 3);
                 state = 3;
                 pass;
 
-            elif not GPIO.input(in4) and not state == 4:
+            # elif not GPIO.input(in4) and not state == 4:
+
+            elif Rasp.input(Rasp.JDOWN) and not state == 4:
                 socketIO.emit('changeDirction', 4)
                 state = 4;
                 pass;
@@ -559,7 +573,7 @@ try:
                     elif event.key == pygame.K_DOWN :
                         socketIO.emit('changeDirction', 4)
                         pass;
-        socketIO.emit('draw request', isGameStarted)
+        socketIO.emit('dr', isGameStarted)
         clock.tick(10)
 
         pygame.display.update()
@@ -577,9 +591,9 @@ try:
 except KeyboardInterrupt:
     print("cleaning up");
     if RASP:
-        GPIO.cleanup();
-
-socketIO.emit('disconnect')
+        # GPIO.cleanup();
+        Rasp.cleanup();
+# socketIO.emit('disconnect')
 
 socketIO.emit('disconnect')
 pygame.quit()

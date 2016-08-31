@@ -85,15 +85,15 @@ io.on('connection', function(socket){
 		if((dir % 2 == 0 && dir -1 != newDirection) || (dir % 2 != 0 && dir + 1 != newDirection))
 				player[idx].direc = newDirection;
 	});
-
-	socket.on('draw request', function(isGameStarted){
+    // data request
+	socket.on('dr', function(isGameStarted){
 		if(player.length < 2 || !isGameStarted){
 			socket.emit('before start the game');
 			return;
 		}
 
 
-		var playerIndex = connection.indexOf(socket);
+		  var playerIndex = connection.indexOf(socket);
 		// recive draw request from single client only
 		if(playerIndex != 0 && connection.length != 0)
 			return;
