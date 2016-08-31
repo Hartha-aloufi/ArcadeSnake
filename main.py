@@ -325,6 +325,7 @@ class Namespace(BaseNamespace):
 
     def on_draw(self, *data):
         # threadQeue.put(data)
+        print('co')
         global x
         x += 1
         player1 = data[0]['player1']
@@ -465,27 +466,6 @@ try:
                 socketIO.emit('changeDirction', 4)
                 state = 4;
                 pass;
-        #
-        # for event in pygame.event.get() :
-        #     if event.type == pygame.QUIT :
-        #         gameExit = True
-        #
-        #     elif event.type == pygame.KEYDOWN :
-        #
-        #     if not GPIO.input(in1) and not state == 1:
-        #         socketIO.emit('changeDirction', 1)
-        #         state = 1;
-        #         pass;
-        #
-        #     elif not GPIO.input(in2) and not state == 2:
-        #         socketIO.emit('changeDirction', 2)
-        #         state = 2;
-        #         pass;
-
-    for event in pygame.event.get() :
-        if event.type == pygame.QUIT :
-            gameExit = True
-
 
         for event in pygame.event.get() :
             if event.type == pygame.QUIT :
@@ -516,34 +496,8 @@ try:
                     elif event.key == pygame.K_DOWN :
                         socketIO.emit('changeDirction', 4)
                         pass;
-
         socketIO.emit('draw request', isGameStarted)
         clock.tick(10)
-
-    # if not threadQeue.empty():
-    #     data = threadQeue.get()
-    #
-    #     global x
-    #     x += 1
-    #     player = data[0]['player']
-    #     food = data[0]['food']
-    #
-    #     gameDisplay.fill(SELVER)
-    #
-    #     for i in range(0, len(player)):
-    #         for j in range(0, len(player[i]['body'])):
-    #             pygame.draw.rect(gameDisplay, player[i]['color'], [player[i]['body'][j]['x'], player[i]['body'][j]['y'], player[i]['body'][j]['width'], player[i]['body'][j]['height']])
-    #
-    #         if i == 0:
-    #             messege_to_secreen('GREEN SNAKE : ' + (str(player[i]['points'])), WHITE, 'bottom', 'left')
-    #         elif(i == 1):
-    #             messege_to_secreen('BLACK SNAKE : ' + (str(player[i]['points'])), WHITE, 'bottom', 'right')
-    #         else :
-    #             messege_to_secreen('YELLOW SNAKE : ' + (str(player[i]['points'])), WHITE, 'bottom', 'center')
-    #
-    #
-    #
-    #     pygame.draw.rect(gameDisplay, food['color'], [food['rect']['x'], food['rect']['y'], food['rect']['width'], food['rect']['height']])
 
         pygame.display.update()
 
@@ -556,6 +510,7 @@ try:
             pygame.display.update()
             time.sleep(0.24)
             x+=1
+
 except KeyboardInterrupt:
     print("cleaning up");
     if RASP:

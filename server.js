@@ -43,7 +43,6 @@ io.on('connection', function(socket){
 		SCREEN_HEIGHT = y;
 
 		console.log(connection.length);
-
 		var color, eyeColor, start_point;
 		if(connection.length == 1){
 			color = GREEN;
@@ -148,6 +147,7 @@ io.on('connection', function(socket){
 
 		var player1Col = player[0].color == RED;
 		var player2Col = player[1].color == RED;
+		console.log('draw');
 		io.emit('draw', {player1Col : player1Col, player2Col : player2Col, player1 : player[0].arr,player2 : player[1].arr, food : [food.rect.x, food.rect.y], player1Dir : player[0].direc,  player2Dir : player[1].direc, player1Points : player[0].points, player2Points : player[1].points});
 
 

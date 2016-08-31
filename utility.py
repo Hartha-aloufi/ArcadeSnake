@@ -155,6 +155,8 @@ class Snake:
 
         if self.error_frames == 200 :
             self.create_random_food(3, food, screen_width, screen_height)
+            self.direc = randint(1, 4)
+            self.error_frames = 0
 
         # self.error_handler += 1
         #
