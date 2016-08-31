@@ -3,16 +3,16 @@ from random import randint
 
 
 
-class Consts:
+class ConstsC:
 
     def __init__(self):
-        self.screenWidth = 1366;
-        self.screenHeight = 768;
+        self.screenWidth = 1280;
+        self.screenHeight = 800;
         self.constWidth = 1280;
-        self.constHeight = 768;
+        self.constHeight = 800;
 
 
-Consts = Consts();
+Consts = ConstsC();
 
 
 def w(x):

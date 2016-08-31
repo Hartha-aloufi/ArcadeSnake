@@ -13,11 +13,14 @@ if(RASP):
 
 
 pygame.init()
-display_info = pygame.display.Info()
+display_info = pygame.display.Info();
 
 SCREEN_WIDTH = display_info.current_w
-SCREEN_HEIGHT = display_info.current_h - 64;
-
+SCREEN_HEIGHT = display_info.current_h;
+# Consts.screenWidth = SCREEN_WIDTH;
+# Consts.screenHeight = SCREEN_HEIGHT;
+# print(Consts.screenWidth);
+# print(Consts.screenHeight);
 BLACK = (0,0,0)
 GREEN = (153, 204, 0)
 DARK_GREEN = (0, 255, 0)
@@ -74,7 +77,10 @@ if RASP:
 
 
 gameDisplay = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT),pygame.NOFRAME)
-pygame.display.set_caption('Hartha')
+pygame.display.set_caption('game');
+pygame.mouse.set_visible(False);
+
+
 clock = pygame.time.Clock()
 
 
@@ -125,7 +131,23 @@ def intro_menu():
 
     while intro :
 
+
+
         gameDisplay.fill(WHITE)
+
+        if RASP:
+            if not GPIO.input(in1): # and not state == 1:
+                playMode = 2
+                pass;
+
+            elif not GPIO.input(in2): # and not state == 2:
+                playMode = 1
+                pass;
+
+            elif not GPIO.input(in3): # and not state == 3:
+                if playMode == 1:
+                    intro = False
+                    pass;
 
         for event in pygame.event.get() :
             if event.type == pygame.KEYDOWN :
@@ -134,6 +156,7 @@ def intro_menu():
                 elif event.key == pygame.K_RIGHT :
                     playMode = 2
                 elif event.key == pygame.K_RETURN:
+
                     intro = False
 
         if playMode == 1 :
@@ -188,7 +211,7 @@ def intro_menu():
 intro_menu()
 
 
-
+state = 0;
 # single player
 if playMode == 1 :
     player1_start_point = (w(20), h(20))
@@ -200,6 +223,47 @@ if playMode == 1 :
     gameExit = False
 
     while not gameExit:
+
+        if RASP:
+
+            if not GPIO.input(in1) and not state == 1:
+                # socketIO.emit('changeDirction', 1)
+
+                # print("Input");
+                if player1.direc != 2 :
+                    player1.direc = 1
+                    # print("change direction");
+
+                state = 1;
+                pass;
+
+            elif not GPIO.input(in2) and not state == 2:
+                # socketIO.emit('changeDirction', 2)
+
+                if player1.direc != 1 :
+                    player1.direc = 2
+
+                state = 2;
+                pass;
+
+            elif not GPIO.input(in3) and not state == 3:
+                # socketIO.emit('changeDirction', 3);
+
+                if player1.direc != 4 :
+                    player1.direc = 3
+
+                state = 3;
+                pass;
+
+            elif not GPIO.input(in4) and not state == 4:
+                # socketIO.emit('changeDirction', 4)
+
+                if player1.direc != 3 :
+                    player1.direc = 4
+
+                state = 4;
+                pass;
+
 
         for event in pygame.event.get() :
             if event.type == pygame.QUIT :
@@ -325,7 +389,6 @@ class Namespace(BaseNamespace):
 
     def on_draw(self, *data):
         # threadQeue.put(data)
-        print('co')
         global x
         x += 1
         player1 = data[0]['player1']
