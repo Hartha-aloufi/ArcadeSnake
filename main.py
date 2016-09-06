@@ -5,8 +5,12 @@ from socketIO_client import SocketIO, BaseNamespace
 import threading
 import time
 import Queue
+import os;
 
-RASP = 0
+position = 0, 0;
+# os.environ['SDL_VIDEO_CENTERED'] = "1";
+os.environ['SDL_VIDEO_WINDOW_POS'] = str(position[0]) + ", " + str(position[1]);
+RASP = 1
 
 if(RASP):
     import RPi.GPIO as GPIO
@@ -20,11 +24,11 @@ pygame.init()
 display_info = pygame.display.Info();
 
 SCREEN_WIDTH = display_info.current_w
-SCREEN_HEIGHT = display_info.current_h;
-# Consts.screenWidth = SCREEN_WIDTH;
-# Consts.screenHeight = SCREEN_HEIGHT;
-# print(Consts.screenWidth);
-# print(Consts.screenHeight);
+SCREEN_HEIGHT = display_info.current_h - 100;
+Consts.screenWidth = SCREEN_WIDTH;
+Consts.screenHeight = SCREEN_HEIGHT;
+print(Consts.screenWidth);
+print(Consts.screenHeight);
 BLACK = (0,0,0)
 GREEN = (153, 204, 0)
 DARK_GREEN = (0, 255, 0)
@@ -53,6 +57,7 @@ in1 = 35;
 in2 = 36
 in3 = 37;
 in4 = 38;
+btn1 = 11;
 
 
 # GPIO.setup(out1, GPIO.OUT);
@@ -75,6 +80,7 @@ if RASP:
     # GPIO.setup(in4, GPIO.IN);
     GPIO.setup(in4, GPIO.IN, pull_up_down=GPIO.PUD_UP);
 
+    GPIO.setup(btn1, GPIO.IN, pull_up_down=GPIO.PUD_UP);
 
 
 
@@ -163,9 +169,14 @@ def intro_menu():
                 pass;
 
             elif not GPIO.input(in3): # and not state == 3:
-                if playMode == 1:
-                    intro = False
-                    pass;
+                # if playMode == 1:
+                #     intro = False
+                #     pass;
+
+                intro = False;
+                
+            elif not GPIO.input(btn1):
+                intro = False;
 
         for event in pygame.event.get() :
             if event.type == pygame.KEYDOWN :
@@ -499,7 +510,7 @@ class Namespace(BaseNamespace):
 
 
 
-socketIO = SocketIO('localhost', 8080, Namespace)
+socketIO = SocketIO('192.168.1.22', 8080, Namespace)
 
 def net():
     socketIO.define(Namespace, "/")

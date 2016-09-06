@@ -6,10 +6,10 @@ from random import randint
 class ConstsC:
 
     def __init__(self):
-        self.screenWidth = 1280;
-        self.screenHeight = 800;
-        self.constWidth = 1280;
-        self.constHeight = 800;
+        self.screenWidth = 0;
+        self.screenHeight = 0;
+        self.constWidth = 800;
+        self.constHeight = 600;
 
 
 Consts = ConstsC();
