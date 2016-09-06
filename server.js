@@ -41,7 +41,7 @@ io.on('connection', function(socket){
 		connection.push(socket);
 		SCREEN_WIDTH = x;
 		SCREEN_HEIGHT = y;
-
+		
 		console.log(connection.length);
 		var color, eyeColor, start_point;
 		if(connection.length == 1){
@@ -127,13 +127,13 @@ io.on('connection', function(socket){
 			if(player[i].can_eat(food)){
 				player[i].eat();
 
-				for (var j = 0; j < player.length; j++) if(i != j){
-					if(player[j].points != 0){
-						player[j].points--;
-						player[j].body.splice(player[j].body.length-1,1);
-					}
+				// for (var j = 0; j < player.length; j++) if(i != j){
+				// 	if(player[j].points != 0){
+				// 		player[j].points--;
+				// 		player[j].body.splice(player[j].body.length-1,1);
+				// 	}
 
-				}
+				// }
 
 				if(player[i].points == numberOfPoiintsToWin){
 					winner = i;
@@ -198,13 +198,13 @@ function Snake(color, points, width, height, start_point, direc, eyeColor){
 		var new_y = this.body[0].y;
 
 		if (this.direc == 1)
-			new_x += speed;
+			new_x = (speed + new_x) % width;
 		else if (this.direc == 2)
-			new_x -= speed;
+			new_x = (new_x - speed) % width;
 		else if (this.direc == 3)
-			new_y -= speed;
+			new_y = (new_y - speed) % height;
 		else if (this.direc == 4)
-			new_y += speed;
+			new_y = (new_y + speed) % height;
 
 		if (new_x < width && new_x > -1 && new_y < height && new_y > -1){
 

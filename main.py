@@ -12,6 +12,10 @@ if(RASP):
     import RPi.GPIO as GPIO
 
 
+spectator = False;    
+
+
+
 pygame.init()
 display_info = pygame.display.Info();
 
@@ -120,11 +124,25 @@ def messege_to_secreen(msg, color, posV, posH, size = 'small'):
     textRect.center = y, x
     gameDisplay.blit(textSurf, textRect)
 
-playMode = 1
+playMode = 1;
+# if spectator:
+#     playMode = 2;
+
+
+if len(sys.argv) >= 2:
+    if sys.argv[1] == "spec":
+        spectator = True;
+        playMode = 2;
+        isGameStarted = True;
+    else:
+        print sys.argv[1];
 
 def intro_menu():
     global playMode
     intro = True
+    print spectator;
+    if spectator:
+        intro = False;
 
     puse_mode_snake = Snake(BLACK, 0, SNAKE_WIDTH, SNAKE_HEIGHT, (w(50),h(50)), 1)
     puse_mode_food = Food(SCREEN_WIDTH, SCREEN_HEIGHT, RED)
@@ -502,6 +520,7 @@ netThread.start()
 
 state = 1;
 try:
+    # global spectator;
     while not gameExit:
         # input = GPIO.input(in1);
         # print(GPIO.input(in1));
@@ -539,10 +558,11 @@ try:
                 if not isGameStarted:
                     if event.key == pygame.K_RETURN:
                         isGameStarted = True
-                        socketIO.emit('create new player', SCREEN_WIDTH, SCREEN_HEIGHT)
+                        if not spectator:
+                            socketIO.emit('create new player', SCREEN_WIDTH, SCREEN_HEIGHT);
 
-                    elif event.key == pygame.K_p :
-                        isGameStarted = True
+                    # elif event.key == pygame.K_p :
+                    #     isGameStarted = True
 
                 else :
                     if event.key == pygame.K_RIGHT :
@@ -574,6 +594,7 @@ try:
             time.sleep(0.24)
             x+=1
 
+            
 except KeyboardInterrupt:
     print("cleaning up");
     if RASP:
