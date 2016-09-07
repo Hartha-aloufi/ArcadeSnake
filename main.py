@@ -10,13 +10,13 @@ import os;
 position = 0, 0;
 # os.environ['SDL_VIDEO_CENTERED'] = "1";
 os.environ['SDL_VIDEO_WINDOW_POS'] = str(position[0]) + ", " + str(position[1]);
-RASP = 1
+RASP = 0
 
 if(RASP):
     import RPi.GPIO as GPIO
 
 
-spectator = False;    
+spectator = False;
 
 
 
@@ -135,18 +135,11 @@ playMode = 1;
 #     playMode = 2;
 
 
-if len(sys.argv) >= 2:
-    if sys.argv[1] == "spec":
-        spectator = True;
-        playMode = 2;
-        isGameStarted = True;
-    else:
-        print sys.argv[1];
+
 
 def intro_menu():
     global playMode
     intro = True
-    print spectator;
     if spectator:
         intro = False;
 
@@ -174,7 +167,7 @@ def intro_menu():
                 #     pass;
 
                 intro = False;
-                
+
             elif not GPIO.input(btn1):
                 intro = False;
 
@@ -237,12 +230,14 @@ def intro_menu():
 
 
 
-intro_menu()
+#intro_menu()
 
 
 state = 0;
 # single player
-if playMode == 1 :
+def single_player_mode():
+    global SCREEN_WIDTH, SCREEN_HEIGHT, RED
+
     player1_start_point = (w(20), h(20))
     hartha_start_point = (w(20), h(50))
     player1 = Snake(GREEN, 0, SNAKE_WIDTH, SNAKE_HEIGHT, player1_start_point, 1)
@@ -376,243 +371,279 @@ if playMode == 1 :
     if  gameExit :
         pygame.quit()
         sys.exit()
+#
+# if playMode == 1 :
+#     single_player_mode()
 
+# two players
 x = 0
+def two_players_mode():
+    global gameExit, isGameStarted,x
 
-class Namespace(BaseNamespace):
-    def on_connect(self):
-        print("Connected")
-
-    def on_player_win(self):
-        global x, isGameStarted
-        msg = 'you win '
-        messege_to_secreen(msg, GREEN, 'center', 'center', 'large')
-        pygame.display.update()
-        time.sleep(3)
-        isGameStarted = False
-        x = 0
-        socketIO.emit('disconnect')
-
-    def on_game_over(self):
-        global x, isGameStarted
-        msg = 'Game over'
-        messege_to_secreen(msg, RED, 'center', 'center', 'large')
-        pygame.display.update()
-        time.sleep(3)
-        isGameStarted = False
-        x = 0
-        socketIO.emit('disconnect')
+    gameExit = False
+    class Namespace(BaseNamespace):
+        def on_connect(self):
+            print("Connected")
+        def on_disconnect(self):
+            print('disconnect')
+            socketIO.disconnect()
 
 
-
-    def on_before_start_the_game(self):
-        gameDisplay.fill(WHITE)
-
-        if isGameStarted:
-            messege_to_secreen('Waiting the other player to start the game', GREEN,'center', 'center', 'mid')
-        else :
-            messege_to_secreen('Press enter to start the game', GREEN,'bottom', 'center', 'mid')
-            messege_to_secreen('Arcade HACKATARI TEAM', GREEN,'center', 'center', 'large')
-
-
-
-    def on_draw(self, *data):
-        # threadQeue.put(data)
-        global x
-        x += 1
-        player1 = data[0]['player1']
-        player2 = data[0]['player2']
-        player1Dir = data[0]['player1Dir']
-        player2Dir = data[0]['player2Dir']
-        player1Points = data[0]['player1Points']
-        player2Points = data[0]['player2Points']
-        player1Col = data[0]['player1Col']
-        player2Col = data[0]['player2Col']
-        food = data[0]['food']
-
-        gameDisplay.fill(SELVER)
-
-        # new Rectangle(this.body[0].x + width - 5, this.body[0].y + height - 10), new Rectangle(this.body[0].x + width - 5, this.body[0].y + height - 5)
-        global GREEN, BLACK
-
-        if player1Col :
-            GREEN = RED
-        i = 0
-        while(i < len(player1)-1):
-            pygame.draw.rect(gameDisplay, GREEN, [player1[i], player1[i+1], 13,13])
-            i = i + 2
-
-        GREEN = (153, 204, 0)
-
-        if player1Dir == 1 :
-            pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH - 5, player1[1] + SNAKE_HEIGHT - 10, 3, 3])
-            pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH - 5, player1[1] + SNAKE_HEIGHT - 5, 3, 3])
-
-        elif player1Dir == 2 :
-            pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH - 10, player1[1] + SNAKE_HEIGHT - 10, 3, 3])
-            pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH - 10, player1[1] + SNAKE_HEIGHT - 5, 3, 3])
-
-        elif player1Dir == 3 :
-            pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH - 10, player1[1] + SNAKE_HEIGHT - 10, 3, 3])
-            pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH - 5, player1[1] + SNAKE_HEIGHT - 10, 3, 3])
-
-        elif player1Dir == 4 :
-            pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH - 10, player1[1] + SNAKE_HEIGHT - 5, 3, 3])
-            pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH - 5, player1[1] + SNAKE_HEIGHT - 5, 3, 3])
-
-
-        if player2Col :
-            BLACK = RED
-
-        i = 0
-        while(i < len(player2) - 1) :
-            pygame.draw.rect(gameDisplay, BLACK, [player2[i], player2[i+1], 13,13])
-            i = i + 2
-
-        BLACK = (0,0,0)
-
-        if player2Dir == 1 :
-            pygame.draw.rect(gameDisplay, GREEN, [player2[0] + SNAKE_WIDTH - 5, player2[1] + SNAKE_HEIGHT - 10, 3, 3])
-            pygame.draw.rect(gameDisplay, GREEN, [player2[0] + SNAKE_WIDTH - 5, player2[1] + SNAKE_HEIGHT - 5, 3, 3])
-
-        elif player2Dir == 2 :
-            pygame.draw.rect(gameDisplay, GREEN, [player2[0] + SNAKE_WIDTH - 10, player2[1] + SNAKE_HEIGHT - 10, 3, 3])
-            pygame.draw.rect(gameDisplay, GREEN, [player2[0] + SNAKE_WIDTH - 10, player2[1] + SNAKE_HEIGHT - 5, 3, 3])
-
-        elif player2Dir == 3 :
-            pygame.draw.rect(gameDisplay, GREEN, [player2[0] + SNAKE_WIDTH - 10, player2[1] + SNAKE_HEIGHT - 10, 3, 3])
-            pygame.draw.rect(gameDisplay, GREEN, [player2[0] + SNAKE_WIDTH - 5, player2[1] + SNAKE_HEIGHT - 10, 3, 3])
-
-        elif player2Dir == 4 :
-            pygame.draw.rect(gameDisplay, GREEN, [player2[0] + SNAKE_WIDTH - 10, player2[1] + SNAKE_HEIGHT - 5, 3, 3])
-            pygame.draw.rect(gameDisplay, GREEN, [player2[0] + SNAKE_WIDTH - 5, player2[1] + SNAKE_HEIGHT - 5, 3, 3])
-
-
-        pygame.draw.rect(gameDisplay, RED, [food[0], food[1], 7,7])
-
-        messege_to_secreen('GREEN SNAKE : ' + (str(player1Points)), WHITE, 'bottom', 'left')
-        messege_to_secreen('BLACK SNAKE : ' + (str(player2Points)), WHITE, 'bottom', 'right')
-        # for i in range(0, len(player)):
-        #     for j in range(0, len(player[i]['body'])):
-        #         pygame.draw.rect(gameDisplay, player[i]['color'], [player[i]['body'][j]['x'], player[i]['body'][j]['y'], player[i]['body'][j]['width'], player[i]['body'][j]['height']])
-        #
-        #     if i == 0:
-        #         messege_to_secreen('GREEN SNAKE : ' + (str(player[i]['points'])), WHITE, 'bottom', 'left')
-        #     elif(i == 1):
-        #         messege_to_secreen('BLACK SNAKE : ' + (str(player[i]['points'])), WHITE, 'bottom', 'right')
-        #     else :
-        #         messege_to_secreen('YELLOW SNAKE : ' + (str(player[i]['points])), WHITE, 'bottom', 'center')
-
-
-
-        # pygame.draw.rect(gameDisplay, food['color'], [food['rect']['x'], food['rect']['y'], food['rect']['width'], food['rect']['height']])
-
-
-
-
-socketIO = SocketIO('192.168.1.22', 8080, Namespace)
-
-def net():
-    socketIO.define(Namespace, "/")
-
-def on_starting():
-    gameDisplay.fill(SELVER)
-    messege_to_secreen('Redy..', GREEN,'center', 'center', 'large')
-    pygame.display.update()
-    time.sleep(5)
-    gameDisplay.fill(SELVER)
-    messege_to_secreen('GO!!', GREEN, 'center', 'center', 'large')
-    pygame.display.update()
-    time.sleep(1)
-
-netThread = threading.Thread(target=net)
-netThread.start()
-
-
-state = 1;
-try:
-    # global spectator;
-    while not gameExit:
-        # input = GPIO.input(in1);
-        # print(GPIO.input(in1));
-        # if input:
-        #     print("INNNNNNPUT");
-
-        if RASP:
-
-            if not GPIO.input(in1) and not state == 1:
-                socketIO.emit('changeDirction', 1)
-                state = 1;
-                pass;
-
-            elif not GPIO.input(in2) and not state == 2:
-                socketIO.emit('changeDirction', 2)
-                state = 2;
-                pass;
-
-            elif not GPIO.input(in3) and not state == 3:
-                socketIO.emit('changeDirction', 3);
-                state = 3;
-                pass;
-
-            elif not GPIO.input(in4) and not state == 4:
-                socketIO.emit('changeDirction', 4)
-                state = 4;
-                pass;
-
-        for event in pygame.event.get() :
-            if event.type == pygame.QUIT :
-                gameExit = True
-
-            elif event.type == pygame.KEYDOWN :
-
-                if not isGameStarted:
-                    if event.key == pygame.K_RETURN:
-                        isGameStarted = True
-                        if not spectator:
-                            socketIO.emit('create new player', SCREEN_WIDTH, SCREEN_HEIGHT);
-
-                    # elif event.key == pygame.K_p :
-                    #     isGameStarted = True
-
-                else :
-                    if event.key == pygame.K_RIGHT :
-                        socketIO.emit('changeDirction', 1)
-                        pass;
-
-                    elif event.key == pygame.K_LEFT :
-                         socketIO.emit('changeDirction', 2)
-                         pass;
-                    elif event.key == pygame.K_UP :
-                        socketIO.emit('changeDirction', 3)
-                        pass;
-
-                    elif event.key == pygame.K_DOWN :
-                        socketIO.emit('changeDirction', 4)
-                        pass;
-        socketIO.emit('draw request', isGameStarted)
-        clock.tick(10)
-
-        pygame.display.update()
-
-        if x == 2 :
-            messege_to_secreen('Ready!!', GREEN, 'center', 'center', 'large')
+        def on_player_win(self):
+            global x, isGameStarted, gameExit
+            msg = 'you win '
+            messege_to_secreen(msg, GREEN, 'center', 'center', 'large')
             pygame.display.update()
-            time.sleep(2)
+            time.sleep(3)
+            isGameStarted = False
+            x = 0
+            gameExit = True
+            socketIO.emit('disconnect')
+
+        def on_game_over(self, winner):
+            global x, isGameStarted, gameExit
+            msg = ''
+            if spectator :
+                msg = winner + ' player win'
+            else :
+                msg = 'You lose'
+            messege_to_secreen(msg, RED, 'center', 'center', 'large')
+            pygame.display.update()
+            time.sleep(3)
+            isGameStarted = False
+            gameExit = True
+            x = 0
+            socketIO.emit('disconnect')
+
+
+
+        def on_before_start_the_game(self):
+            gameDisplay.fill(WHITE)
+
+            if isGameStarted:
+                msg = 'Waiting for other players to start the game'
+
+                if spectator :
+                    msg = 'Waiting the players to start the game'
+                messege_to_secreen(msg, GREEN,'center', 'center', 'mid')
+            else :
+                messege_to_secreen('Press enter to start the game', GREEN,'bottom', 'center', 'mid')
+                messege_to_secreen('Arcade HACKATARI TEAM', GREEN,'center', 'center', 'large')
+
+
+
+        def on_draw(self, *data):
+            # threadQeue.put(data)
+            global x
+            x += 1
+            player1 = data[0]['player1']
+            player2 = data[0]['player2']
+            player1Dir = data[0]['player1Dir']
+            player2Dir = data[0]['player2Dir']
+            player1Points = data[0]['player1Points']
+            player2Points = data[0]['player2Points']
+            player1Col = data[0]['player1Col']
+            player2Col = data[0]['player2Col']
+            food = data[0]['food']
+
             gameDisplay.fill(SELVER)
-            messege_to_secreen('GO!!', GREEN, 'center', 'center', 'large')
+
+            # new Rectangle(this.body[0].x + width - 5, this.body[0].y + height - 10), new Rectangle(this.body[0].x + width - 5, this.body[0].y + height - 5)
+            global GREEN, BLACK
+
+            if player1Col :
+                GREEN = RED
+            i = 0
+            while(i < len(player1)-1):
+                pygame.draw.rect(gameDisplay, GREEN, [player1[i], player1[i+1], 13,13])
+                i = i + 2
+
+            GREEN = (153, 204, 0)
+
+            if player1Dir == 1 :
+                pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH - 5, player1[1] + SNAKE_HEIGHT - 10, 3, 3])
+                pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH - 5, player1[1] + SNAKE_HEIGHT - 5, 3, 3])
+
+            elif player1Dir == 2 :
+                pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH - 10, player1[1] + SNAKE_HEIGHT - 10, 3, 3])
+                pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH - 10, player1[1] + SNAKE_HEIGHT - 5, 3, 3])
+
+            elif player1Dir == 3 :
+                pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH - 10, player1[1] + SNAKE_HEIGHT - 10, 3, 3])
+                pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH - 5, player1[1] + SNAKE_HEIGHT - 10, 3, 3])
+
+            elif player1Dir == 4 :
+                pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH - 10, player1[1] + SNAKE_HEIGHT - 5, 3, 3])
+                pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH - 5, player1[1] + SNAKE_HEIGHT - 5, 3, 3])
+
+
+            if player2Col :
+                BLACK = RED
+
+            i = 0
+            while(i < len(player2) - 1) :
+                pygame.draw.rect(gameDisplay, BLACK, [player2[i], player2[i+1], 13,13])
+                i = i + 2
+
+            BLACK = (0,0,0)
+
+            if player2Dir == 1 :
+                pygame.draw.rect(gameDisplay, GREEN, [player2[0] + SNAKE_WIDTH - 5, player2[1] + SNAKE_HEIGHT - 10, 3, 3])
+                pygame.draw.rect(gameDisplay, GREEN, [player2[0] + SNAKE_WIDTH - 5, player2[1] + SNAKE_HEIGHT - 5, 3, 3])
+
+            elif player2Dir == 2 :
+                pygame.draw.rect(gameDisplay, GREEN, [player2[0] + SNAKE_WIDTH - 10, player2[1] + SNAKE_HEIGHT - 10, 3, 3])
+                pygame.draw.rect(gameDisplay, GREEN, [player2[0] + SNAKE_WIDTH - 10, player2[1] + SNAKE_HEIGHT - 5, 3, 3])
+
+            elif player2Dir == 3 :
+                pygame.draw.rect(gameDisplay, GREEN, [player2[0] + SNAKE_WIDTH - 10, player2[1] + SNAKE_HEIGHT - 10, 3, 3])
+                pygame.draw.rect(gameDisplay, GREEN, [player2[0] + SNAKE_WIDTH - 5, player2[1] + SNAKE_HEIGHT - 10, 3, 3])
+
+            elif player2Dir == 4 :
+                pygame.draw.rect(gameDisplay, GREEN, [player2[0] + SNAKE_WIDTH - 10, player2[1] + SNAKE_HEIGHT - 5, 3, 3])
+                pygame.draw.rect(gameDisplay, GREEN, [player2[0] + SNAKE_WIDTH - 5, player2[1] + SNAKE_HEIGHT - 5, 3, 3])
+
+
+            pygame.draw.rect(gameDisplay, RED, [food[0], food[1], 7,7])
+
+            messege_to_secreen('GREEN SNAKE : ' + (str(player1Points)), WHITE, 'bottom', 'left')
+            messege_to_secreen('BLACK SNAKE : ' + (str(player2Points)), WHITE, 'bottom', 'right')
+            # for i in range(0, len(player)):
+            #     for j in range(0, len(player[i]['body'])):
+            #         pygame.draw.rect(gameDisplay, player[i]['color'], [player[i]['body'][j]['x'], player[i]['body'][j]['y'], player[i]['body'][j]['width'], player[i]['body'][j]['height']])
+            #
+            #     if i == 0:
+            #         messege_to_secreen('GREEN SNAKE : ' + (str(player[i]['points'])), WHITE, 'bottom', 'left')
+            #     elif(i == 1):
+            #         messege_to_secreen('BLACK SNAKE : ' + (str(player[i]['points'])), WHITE, 'bottom', 'right')
+            #     else :
+            #         messege_to_secreen('YELLOW SNAKE : ' + (str(player[i]['points])), WHITE, 'bottom', 'center')
+
+
+
+            # pygame.draw.rect(gameDisplay, food['color'], [food['rect']['x'], food['rect']['y'], food['rect']['width'], food['rect']['height']])
+
+
+
+
+    socketIO = SocketIO('localhost', 8080, Namespace)
+
+    def net():
+        socketIO.define(Namespace, "/")
+
+    def on_starting():
+        gameDisplay.fill(SELVER)
+        messege_to_secreen('Redy..', GREEN,'center', 'center', 'large')
+        pygame.display.update()
+        time.sleep(5)
+        gameDisplay.fill(SELVER)
+        messege_to_secreen('GO!!', GREEN, 'center', 'center', 'large')
+        pygame.display.update()
+        time.sleep(1)
+
+    netThread = threading.Thread(target=net)
+    netThread.start()
+
+
+    state = 1;
+    try:
+        # global spectator;
+        while not gameExit:
+            # input = GPIO.input(in1);
+            # print(GPIO.input(in1));
+            # if input:
+            #     print("INNNNNNPUT");
+
+            if RASP:
+
+                if not GPIO.input(in1) and not state == 1:
+                    socketIO.emit('changeDirction', 1)
+                    state = 1;
+                    pass;
+
+                elif not GPIO.input(in2) and not state == 2:
+                    socketIO.emit('changeDirction', 2)
+                    state = 2;
+                    pass;
+
+                elif not GPIO.input(in3) and not state == 3:
+                    socketIO.emit('changeDirction', 3);
+                    state = 3;
+                    pass;
+
+                elif not GPIO.input(in4) and not state == 4:
+                    socketIO.emit('changeDirction', 4)
+                    state = 4;
+                    pass;
+
+            for event in pygame.event.get() :
+                if event.type == pygame.QUIT :
+                    gameExit = True
+
+                elif event.type == pygame.KEYDOWN :
+
+                    if not isGameStarted:
+                        if event.key == pygame.K_RETURN:
+                            isGameStarted = True
+                            if not spectator:
+                                socketIO.emit('create new player', SCREEN_WIDTH, SCREEN_HEIGHT);
+
+                        # elif event.key == pygame.K_p :
+                        #     isGameStarted = True
+
+                    else :
+                        if event.key == pygame.K_RIGHT :
+                            socketIO.emit('changeDirction', 1)
+                            pass;
+
+                        elif event.key == pygame.K_LEFT :
+                             socketIO.emit('changeDirction', 2)
+                             pass;
+                        elif event.key == pygame.K_UP :
+                            socketIO.emit('changeDirction', 3)
+                            pass;
+
+                        elif event.key == pygame.K_DOWN :
+                            socketIO.emit('changeDirction', 4)
+                            pass;
+            socketIO.emit('draw request', isGameStarted)
+            clock.tick(10)
             pygame.display.update()
-            time.sleep(0.24)
-            x+=1
 
-            
-except KeyboardInterrupt:
-    print("cleaning up");
-    if RASP:
-        GPIO.cleanup();
+            if x == 2 :
+                messege_to_secreen('Ready!!', GREEN, 'center', 'center', 'large')
+                pygame.display.update()
+                time.sleep(2)
+                gameDisplay.fill(SELVER)
+                messege_to_secreen('GO!!', GREEN, 'center', 'center', 'large')
+                pygame.display.update()
+                time.sleep(0.24)
+                x+=1
 
-socketIO.emit('disconnect')
 
-socketIO.emit('disconnect')
-pygame.quit()
-sys.exit()
+    except KeyboardInterrupt:
+        print("cleaning up");
+        if RASP:
+            GPIO.cleanup();
+
+    socketIO.emit('disconnect')
+    #
+    # pygame.quit()
+    # sys.exit()
+
+#two_players_mode()
+
+while True :
+    if len(sys.argv) >= 2:
+        if sys.argv[1] == "spec":
+            spectator = True;
+            playMode = 2;
+            isGameStarted = True;
+
+    intro_menu()
+
+    if playMode == 1 :
+        single_player_mode()
+    elif playMode == 2 :
+        two_players_mode()
+    print('looping')
