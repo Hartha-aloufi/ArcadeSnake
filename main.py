@@ -24,7 +24,7 @@ pygame.init()
 display_info = pygame.display.Info();
 
 SCREEN_WIDTH = display_info.current_w
-SCREEN_HEIGHT = display_info.current_h - 100;
+SCREEN_HEIGHT = display_info.current_h - 32;
 Consts.screenWidth = SCREEN_WIDTH;
 Consts.screenHeight = SCREEN_HEIGHT;
 print(Consts.screenWidth);
@@ -203,7 +203,7 @@ def intro_menu():
 
         gameDisplay.blit(textSurface, rect)
 
-        messege_to_secreen('Arcade HACKATARI TEAM', GREEN,'center', 'center', 'large')
+        messege_to_secreen('ARCADE HACKATARI TEAM', GREEN,'center', 'center', 'large')
 
 
         puse_mode_snake.move(puse_mode_food, SCREEN_WIDTH, SCREEN_HEIGHT)
@@ -526,7 +526,7 @@ def two_players_mode():
 
 
 
-    socketIO = SocketIO('localhost', 8080, Namespace)
+    socketIO = SocketIO('192.168.1.22', 8080, Namespace)
 
     def net():
         socketIO.define(Namespace, "/")

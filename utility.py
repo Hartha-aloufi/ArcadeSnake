@@ -31,7 +31,7 @@ class Snake:
         self.color = color
         self.points = points
         self.direc = direc
-        self.eyes = [Rectangle(self.body[0].x + width/1.25, self.body[0].y + height/2.5, 3, 3),Rectangle(self.body[0].x + width/1.25, self.body[0].y + height/1.25, 3, 3)]
+        self.eyes = [Rectangle(self.body[0].x + width/1.25, self.body[0].y + height/2.5, w(3), h(3)),Rectangle(self.body[0].x + width/1.25, self.body[0].y + height/1.25, w(3), h(3))]
         self.error_x = 0
         self.error_y = 0
         self.error_handler = 0
