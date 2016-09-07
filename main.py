@@ -138,11 +138,12 @@ playMode = 1;
 
 
 def intro_menu():
-    global playMode
+    # global playMode
+    playMode = 1;
     intro = True
     if spectator:
         intro = False;
-    playMode = 1;
+    # playMode = 1;
     puse_mode_snake = Snake(BLACK, 0, SNAKE_WIDTH, SNAKE_HEIGHT, (w(50),h(50)), 1)
     puse_mode_food = Food(SCREEN_WIDTH, SCREEN_HEIGHT, RED)
 
