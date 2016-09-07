@@ -112,21 +112,21 @@ class Snake:
 
     def update_snake_eyes(self):
         if self.direc == 1:
-            self.eyes = [Rectangle(self.body[0].x + self.body[0].width / 1.62, self.body[0].y + self.body[0].height / 4.3, 3, 3),
-                        Rectangle(self.body[0].x + self.body[0].width / 1.62 , self.body[0].y + self.body[0].height / 1.62, 3, 3)]
+            self.eyes = [Rectangle(self.body[0].x + self.body[0].width / 1.62, self.body[0].y + self.body[0].height / 4.3, w(3), h(3)),
+                        Rectangle(self.body[0].x + self.body[0].width / 1.62 , self.body[0].y + self.body[0].height / 1.62, w(3), h(3))]
 
         elif self.direc == 2 :
-            self.eyes = [Rectangle(self.body[0].x + self.body[0].width / 4.3, self.body[0].y + self.body[0].height / 4.3, 3, 3),
-                        Rectangle(self.body[0].x + self.body[0].width / 4.3 , self.body[0].y + self.body[0].height / 1.62, 3, 3)]
+            self.eyes = [Rectangle(self.body[0].x + self.body[0].width / 4.3, self.body[0].y + self.body[0].height / 4.3, w(3), h(3)),
+                        Rectangle(self.body[0].x + self.body[0].width / 4.3 , self.body[0].y + self.body[0].height / 1.62, w(3), h(3))]
 
 
         elif self.direc == 3 :
-            self.eyes = [Rectangle(self.body[0].x + self.body[0].width / 4.3, self.body[0].y + self.body[0].height / 4.3, 3, 3),
-                        Rectangle(self.body[0].x + self.body[0].width / 1.62 , self.body[0].y + self.body[0].height / 4.3, 3, 3)]
+            self.eyes = [Rectangle(self.body[0].x + self.body[0].width / 4.3, self.body[0].y + self.body[0].height / 4.3, w(3), h(3)),
+                        Rectangle(self.body[0].x + self.body[0].width / 1.62 , self.body[0].y + self.body[0].height / 4.3, w(3), h(3))]
 
         else :
-            self.eyes = [Rectangle(self.body[0].x + self.body[0].width / 1.62, self.body[0].y + self.body[0].height / 1.62, 3, 3),
-                        Rectangle(self.body[0].x + self.body[0].width / 4.3 , self.body[0].y + self.body[0].height / 1.62, 3, 3)]
+            self.eyes = [Rectangle(self.body[0].x + self.body[0].width / 1.62, self.body[0].y + self.body[0].height / 1.62, w(3), h(3)),
+                        Rectangle(self.body[0].x + self.body[0].width / 4.3 , self.body[0].y + self.body[0].height / 1.62, w(3), h(3))]
 
 
     def create_random_food(self, number_of_food, orig_food, screen_width, screen_height):

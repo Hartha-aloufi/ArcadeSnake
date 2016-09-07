@@ -12,8 +12,8 @@ const RED = [255, 0 , 0];
 const BLACK = [0, 0, 0];
 const SNAKE_WIDTH = 12;
 const SNAKE_HEIGHT = 12;
- SCREEN_WIDTH = 800;
- SCREEN_HEIGHT = 600;
+SCREEN_WIDTH = 800;
+SCREEN_HEIGHT = 600;
 const player1_start_point = [10, 10];
 const player2_start_point = [10, 50];
 const SPEED = 20;
@@ -151,10 +151,10 @@ io.on('connection', function(socket){
 
 
 		if(winner != -1){
-			var color =  i == 0 ? 'Green' : 'Blck'
+			var color =  i == 0 ? 'Black' : 'Green'
 
-			connection[winner].emit('player win');
-			connection[winner].broadcast.emit('game over', color);
+			connection[winner].emit('Player Wins');
+			connection[winner].broadcast.emit('Game Over', color);
 
 			io.emit('disconnect');
 			connection = [];

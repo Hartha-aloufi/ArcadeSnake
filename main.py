@@ -192,13 +192,13 @@ def intro_menu():
         else :
             pygame.draw.rect(gameDisplay, GREEN, [SCREEN_WIDTH / 2,  SCREEN_HEIGHT / 1.5,  SCREEN_WIDTH / 4, SCREEN_HEIGHT / 8])
 
-        textSurface = mid_font.render('Single player', True, WHITE)
+        textSurface = mid_font.render('SINGLE PLAYER', True, WHITE)
         rect = textSurface.get_rect()
         rect.center = SCREEN_WIDTH / 6 + w(140), SCREEN_HEIGHT / 1.5 + h(46)
 
         gameDisplay.blit(textSurface, rect)
 
-        textSurface = mid_font.render('Two players', True, WHITE)
+        textSurface = mid_font.render('MULTIPLAYER', True, WHITE)
         rect = textSurface.get_rect()
         rect.center = SCREEN_WIDTH / 2 + w(140), SCREEN_HEIGHT / 1.5 + h(46)
 
@@ -456,26 +456,26 @@ def two_players_mode():
                 GREEN = RED
             i = 0
             while(i < len(player1)-1):
-                pygame.draw.rect(gameDisplay, GREEN, [player1[i], player1[i+1], 13,13])
+                pygame.draw.rect(gameDisplay, GREEN, [player1[i], player1[i+1], w(13),h(13)])
                 i = i + 2
 
             GREEN = (153, 204, 0)
 
             if player1Dir == 1 :
-                pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH - 5, player1[1] + SNAKE_HEIGHT - 10, 3, 3])
-                pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH - 5, player1[1] + SNAKE_HEIGHT - 5, 3, 3])
+                pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH - w(5), player1[1] + SNAKE_HEIGHT - h(10), w(3), h(3)])
+                pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH - w(5), player1[1] + SNAKE_HEIGHT - h(5), w(3), h(3)])
 
             elif player1Dir == 2 :
-                pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH - 10, player1[1] + SNAKE_HEIGHT - 10, 3, 3])
-                pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH - 10, player1[1] + SNAKE_HEIGHT - 5, 3, 3])
+                pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH - w(10), player1[1] + SNAKE_HEIGHT - h(10), w(3), h(3)])
+                pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH - w(10), player1[1] + SNAKE_HEIGHT - h(5), w(3), h(3)])
 
             elif player1Dir == 3 :
-                pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH - 10, player1[1] + SNAKE_HEIGHT - 10, 3, 3])
-                pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH - 5, player1[1] + SNAKE_HEIGHT - 10, 3, 3])
+                pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH - w(10), player1[1] + SNAKE_HEIGHT - h(10), w(3), h(3)])
+                pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH - w(5), player1[1] + SNAKE_HEIGHT - h(10), w(3), h(3)])
 
             elif player1Dir == 4 :
-                pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH - 10, player1[1] + SNAKE_HEIGHT - 5, 3, 3])
-                pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH - 5, player1[1] + SNAKE_HEIGHT - 5, 3, 3])
+                pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH - w(10), player1[1] + SNAKE_HEIGHT - h(5), w(3), h(3)])
+                pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH - w(5), player1[1] + SNAKE_HEIGHT - h(5), w(3), h(3)])
 
 
             if player2Col :
@@ -483,29 +483,29 @@ def two_players_mode():
 
             i = 0
             while(i < len(player2) - 1) :
-                pygame.draw.rect(gameDisplay, BLACK, [player2[i], player2[i+1], 13,13])
+                pygame.draw.rect(gameDisplay, BLACK, [player2[i], player2[i+1], w(13),h(13)])
                 i = i + 2
 
             BLACK = (0,0,0)
 
             if player2Dir == 1 :
-                pygame.draw.rect(gameDisplay, GREEN, [player2[0] + SNAKE_WIDTH - 5, player2[1] + SNAKE_HEIGHT - 10, 3, 3])
-                pygame.draw.rect(gameDisplay, GREEN, [player2[0] + SNAKE_WIDTH - 5, player2[1] + SNAKE_HEIGHT - 5, 3, 3])
+                pygame.draw.rect(gameDisplay, GREEN, [player2[0] + SNAKE_WIDTH - w(5), player2[1] + SNAKE_HEIGHT - h(10), w(3), h(3)])
+                pygame.draw.rect(gameDisplay, GREEN, [player2[0] + SNAKE_WIDTH - w(5), player2[1] + SNAKE_HEIGHT - h(5), w(3), h(3)])
 
             elif player2Dir == 2 :
-                pygame.draw.rect(gameDisplay, GREEN, [player2[0] + SNAKE_WIDTH - 10, player2[1] + SNAKE_HEIGHT - 10, 3, 3])
-                pygame.draw.rect(gameDisplay, GREEN, [player2[0] + SNAKE_WIDTH - 10, player2[1] + SNAKE_HEIGHT - 5, 3, 3])
+                pygame.draw.rect(gameDisplay, GREEN, [player2[0] + SNAKE_WIDTH - w(10), player2[1] + SNAKE_HEIGHT - h(10), w(3), h(3)])
+                pygame.draw.rect(gameDisplay, GREEN, [player2[0] + SNAKE_WIDTH - w(10), player2[1] + SNAKE_HEIGHT - h(5), w(3), h(3)])
 
             elif player2Dir == 3 :
-                pygame.draw.rect(gameDisplay, GREEN, [player2[0] + SNAKE_WIDTH - 10, player2[1] + SNAKE_HEIGHT - 10, 3, 3])
-                pygame.draw.rect(gameDisplay, GREEN, [player2[0] + SNAKE_WIDTH - 5, player2[1] + SNAKE_HEIGHT - 10, 3, 3])
+                pygame.draw.rect(gameDisplay, GREEN, [player2[0] + SNAKE_WIDTH - w(10), player2[1] + SNAKE_HEIGHT - h(10), w(3), h(3)])
+                pygame.draw.rect(gameDisplay, GREEN, [player2[0] + SNAKE_WIDTH - w(5), player2[1] + SNAKE_HEIGHT - h(10), w(3), h(3)])
 
             elif player2Dir == 4 :
-                pygame.draw.rect(gameDisplay, GREEN, [player2[0] + SNAKE_WIDTH - 10, player2[1] + SNAKE_HEIGHT - 5, 3, 3])
-                pygame.draw.rect(gameDisplay, GREEN, [player2[0] + SNAKE_WIDTH - 5, player2[1] + SNAKE_HEIGHT - 5, 3, 3])
+                pygame.draw.rect(gameDisplay, GREEN, [player2[0] + SNAKE_WIDTH - w(10), player2[1] + SNAKE_HEIGHT -h(5), w(3), h(3)])
+                pygame.draw.rect(gameDisplay, GREEN, [player2[0] + SNAKE_WIDTH - w(5), player2[1] + SNAKE_HEIGHT - h(5), w(3), h(3)])
 
 
-            pygame.draw.rect(gameDisplay, RED, [food[0], food[1], 7,7])
+            pygame.draw.rect(gameDisplay, RED, [food[0], food[1], w(7),h(7)])
 
             messege_to_secreen('GREEN SNAKE : ' + (str(player1Points)), WHITE, 'bottom', 'left')
             messege_to_secreen('BLACK SNAKE : ' + (str(player2Points)), WHITE, 'bottom', 'right')
