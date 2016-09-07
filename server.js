@@ -39,8 +39,8 @@ io.on('connection', function(socket){
 
 	socket.on('create new player', function(x, y){
 		connection.push(socket);
-		SCREEN_WIDTH = x;
-		SCREEN_HEIGHT = y;
+		// SCREEN_WIDTH = x;
+		// SCREEN_HEIGHT = y;
 
 		console.log(connection.length);
 		var color, eyeColor, start_point;

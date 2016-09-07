@@ -10,7 +10,7 @@ import os;
 position = 0, 0;
 # os.environ['SDL_VIDEO_CENTERED'] = "1";
 os.environ['SDL_VIDEO_WINDOW_POS'] = str(position[0]) + ", " + str(position[1]);
-RASP = 1
+RASP = 0
 
 if(RASP):
     import RPi.GPIO as GPIO
@@ -130,7 +130,7 @@ def messege_to_secreen(msg, color, posV, posH, size = 'small'):
     textRect.center = y, x
     gameDisplay.blit(textSurf, textRect)
 
-playMode = 1;
+# playMode = 1;
 # if spectator:
 #     playMode = 2;
 
@@ -138,8 +138,9 @@ playMode = 1;
 
 
 def intro_menu():
-    # global playMode
+
     playMode = 1;
+    global playMode
     intro = True
     if spectator:
         intro = False;
