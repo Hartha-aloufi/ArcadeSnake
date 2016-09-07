@@ -10,7 +10,7 @@ import os;
 position = 0, 0;
 # os.environ['SDL_VIDEO_CENTERED'] = "1";
 os.environ['SDL_VIDEO_WINDOW_POS'] = str(position[0]) + ", " + str(position[1]);
-RASP = 0
+RASP = 1
 
 if(RASP):
     import RPi.GPIO as GPIO
@@ -142,7 +142,7 @@ def intro_menu():
     intro = True
     if spectator:
         intro = False;
-
+    playMode = 1;
     puse_mode_snake = Snake(BLACK, 0, SNAKE_WIDTH, SNAKE_HEIGHT, (w(50),h(50)), 1)
     puse_mode_food = Food(SCREEN_WIDTH, SCREEN_HEIGHT, RED)
 
@@ -250,7 +250,7 @@ def single_player_mode():
 
         if RASP:
 
-            if not GPIO.input(in1) and not state == 1:
+            if not GPIO.input(in1): # and not state == 1:
                 # socketIO.emit('changeDirction', 1)
 
                 # print("Input");
@@ -258,34 +258,34 @@ def single_player_mode():
                     player1.direc = 1
                     # print("change direction");
 
-                state = 1;
+                # state = 1;
                 pass;
 
-            elif not GPIO.input(in2) and not state == 2:
+            elif not GPIO.input(in2): # and not state == 2:
                 # socketIO.emit('changeDirction', 2)
 
                 if player1.direc != 1 :
                     player1.direc = 2
 
-                state = 2;
+                # state = 2;
                 pass;
 
-            elif not GPIO.input(in3) and not state == 3:
+            elif not GPIO.input(in3): # and not state == 3:
                 # socketIO.emit('changeDirction', 3);
 
                 if player1.direc != 4 :
                     player1.direc = 3
 
-                state = 3;
+                # state = 3;
                 pass;
 
-            elif not GPIO.input(in4) and not state == 4:
+            elif not GPIO.input(in4): # and not state == 4:
                 # socketIO.emit('changeDirction', 4)
 
                 if player1.direc != 3 :
                     player1.direc = 4
 
-                state = 4;
+                # state = 4;
                 pass;
 
 
@@ -424,7 +424,7 @@ def two_players_mode():
                 msg = 'Waiting for other players to start the game'
 
                 if spectator :
-                    msg = 'Waiting the players to start the game'
+                    msg = 'Waiting for other players to start the game'
                 messege_to_secreen(msg, GREEN,'center', 'center', 'mid')
             else :
                 messege_to_secreen('Press enter to start the game', GREEN,'bottom', 'center', 'mid')
@@ -555,27 +555,35 @@ def two_players_mode():
             #     print("INNNNNNPUT");
 
             if RASP:
+                if not isGameStarted:
+                    if not GPIO.input(btn1) or not GPIO.input(in3):
+                        isGameStarted = True
+                        if not spectator:
+                            socketIO.emit('create new player', SCREEN_WIDTH, SCREEN_HEIGHT);
+                
+                else:
+                    if not GPIO.input(in1) and not state == 1:
+                        socketIO.emit('changeDirction', 1)
+                        state = 1;
+                        pass;
 
-                if not GPIO.input(in1) and not state == 1:
-                    socketIO.emit('changeDirction', 1)
-                    state = 1;
-                    pass;
+                    elif not GPIO.input(in2) and not state == 2:
+                        socketIO.emit('changeDirction', 2)
+                        state = 2;
+                        pass;
 
-                elif not GPIO.input(in2) and not state == 2:
-                    socketIO.emit('changeDirction', 2)
-                    state = 2;
-                    pass;
+                    elif not GPIO.input(in3) and not state == 3:
+                        socketIO.emit('changeDirction', 3);
+                        state = 3;
+                        pass;
 
-                elif not GPIO.input(in3) and not state == 3:
-                    socketIO.emit('changeDirction', 3);
-                    state = 3;
-                    pass;
+                    elif not GPIO.input(in4) and not state == 4:
+                        socketIO.emit('changeDirction', 4)
+                        state = 4;
+                        pass;
 
-                elif not GPIO.input(in4) and not state == 4:
-                    socketIO.emit('changeDirction', 4)
-                    state = 4;
-                    pass;
 
+                        
             for event in pygame.event.get() :
                 if event.type == pygame.QUIT :
                     gameExit = True
