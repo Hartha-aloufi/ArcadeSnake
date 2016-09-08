@@ -461,8 +461,8 @@ def two_players_mode():
                 pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH /1.62, player1[1] + SNAKE_HEIGHT / 1.62, 3, 3])
 
             elif player1Dir == 2 :
-                pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH/4.3, player1[1] + SNAKE_HEIGHT/ 4.3, 3, 3])
-                pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH/4.3, player1[1] + SNAKE_HEIGHT /1.62, 3, 3])
+                pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH/4.3, player1[1] + SNAKE_HEIGHT 4.3, 3, 3])
+                pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH/4.3, player1[1] + SNAKE_HEIGHT 1.62, 3, 3])
 
             elif player1Dir == 3 :
                 pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH/4.3, player1[1] + SNAKE_HEIGHT /4.3, 3, 3])
@@ -522,7 +522,7 @@ def two_players_mode():
 
 
     print('sdf')
-    socketIO = SocketIO('192.168.43.254', 8080, Namespace)
+    socketIO = SocketIO('192.168.43.252', 8080, Namespace)
     print('socket status ' + str(socketIO.connected))
     def net():
         socketIO.define(Namespace, "/")
