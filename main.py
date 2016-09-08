@@ -353,7 +353,7 @@ def single_player_mode():
         messege_to_secreen('GREEN SNAKE : ' + (str(player1.points)), WHITE, 'bottom', 'left')
         messege_to_secreen('BLACK SNAKE : ' + (str(hartha.points)), WHITE, 'bottom', 'right')
 
-        if player1.points == 1 or hartha.points == 1:
+        if player1.points == 1  or hartha.points == 1:
             if player1.points > hartha.points:
                 messege_to_secreen('You win', GREEN, 'center', 'center', 'large')
             else :
@@ -367,6 +367,7 @@ def single_player_mode():
             gameExit = True
         pygame.display.update()
         clock.tick(30)
+
 #
 # if playMode == 1 :
 #     single_player_mode()
@@ -421,7 +422,7 @@ def two_players_mode():
 
                 if spectator :
                     msg = 'Waiting the players to start the game'
-                    messege_to_secreen(msg, GREEN,'center', 'center', 'mid')
+                messege_to_secreen(msg, GREEN,'center', 'center', 'mid')
             else :
                 messege_to_secreen('Press enter to start the game', GREEN,'bottom', 'center', 'mid')
                 messege_to_secreen('Arcade HACKATARI TEAM', GREEN,'center', 'center', 'large')
@@ -451,25 +452,25 @@ def two_players_mode():
                 GREEN = RED
             i = 0
             while(i < len(player1)-1):
-                pygame.draw.rect(gameDisplay, GREEN, [player1[i], player1[i+1], 13,13])
+                pygame.draw.rect(gameDisplay, GREEN, [player1[i], player1[i+1], w(13),h(13)])
                 i = i + 2
 
             GREEN = (153, 204, 0)
 
             if player1Dir == 1 :
-                pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH /1.62, player1[1] + SNAKE_HEIGHT / 4.3, 3, 3])
-                pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH /1.62, player1[1] + SNAKE_HEIGHT / 1.62, 3, 3])
+                pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH /1.62, player1[1] + SNAKE_HEIGHT /4.3, 3, 3])
+                pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH /1.62, player1[1] + SNAKE_HEIGHT /1.62, 3, 3])
 
             elif player1Dir == 2 :
-                pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH/4.3, player1[1] + SNAKE_HEIGHT 4.3, 3, 3])
-                pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH/4.3, player1[1] + SNAKE_HEIGHT 1.62, 3, 3])
+                pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH /4.3, player1[1] + SNAKE_HEIGHT /4.3, 3, 3])
+                pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH /4.3, player1[1] + SNAKE_HEIGHT /1.62, 3, 3])
 
             elif player1Dir == 3 :
-                pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH/4.3, player1[1] + SNAKE_HEIGHT /4.3, 3, 3])
-                pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH/1.62, player1[1] + SNAKE_HEIGHT/4.3, 3, 3])
+                pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH /4.3, player1[1] + SNAKE_HEIGHT /4.3, 3, 3])
+                pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH /1.62, player1[1] + SNAKE_HEIGHT /4.3, 3, 3])
 
             elif player1Dir == 4 :
-                pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH/ 1.62, player1[1] + SNAKE_HEIGHT /1.62, 3, 3])
+                pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH /1.62, player1[1] + SNAKE_HEIGHT /1.62, 3, 3])
                 pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH /4.3, player1[1] + SNAKE_HEIGHT /1.62, 3, 3])
 
 
@@ -521,9 +522,9 @@ def two_players_mode():
 
 
 
-    print('sdf')
-    socketIO = SocketIO('192.168.43.252', 8080, Namespace)
-    print('socket status ' + str(socketIO.connected))
+
+    socketIO = SocketIO('localhost', 8080, Namespace)
+
     def net():
         socketIO.define(Namespace, "/")
 
