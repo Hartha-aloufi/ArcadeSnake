@@ -6,7 +6,7 @@ import threading
 import time
 import Queue
 
-RASP = 0
+RASP = 1
 
 if(RASP):
     import RPi.GPIO as GPIO
@@ -145,9 +145,9 @@ def intro_menu():
                 pass;
 
             elif not GPIO.input(in3): # and not state == 3:
-                if playMode == 1:
-                    intro = False
-                    pass;
+                # if playMode == 1:
+                intro = False
+                    # pass;
 
         for event in pygame.event.get() :
             if event.type == pygame.KEYDOWN :
@@ -156,7 +156,6 @@ def intro_menu():
                 elif event.key == pygame.K_RIGHT :
                     playMode = 2
                 elif event.key == pygame.K_RETURN:
-
                     intro = False
 
         if playMode == 1 :
@@ -481,7 +480,7 @@ class Namespace(BaseNamespace):
 
 
 
-socketIO = SocketIO('localhost', 8080, Namespace)
+socketIO = SocketIO('192.168.1.22', 8080, Namespace)
 
 def net():
     socketIO.define(Namespace, "/")
