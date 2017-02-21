@@ -41,7 +41,7 @@ SNAKE_WIDTH = w(13)
 #EYE_SIZE = 3
 gameExit = False
 isGameStarted = False
-SPEED = 13
+SPEED = 8
 winningPoints = 10;
 
 # threadQeue = Queue.Queue()
@@ -636,7 +636,7 @@ def two_players_mode():
                             socketIO.emit('changeDirction', 4)
                             pass;
             socketIO.emit('draw request', isGameStarted)
-            clock.tick(10)
+            clock.tick(15)
             pygame.display.update()
 
             if x == 2 :

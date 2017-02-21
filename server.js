@@ -16,7 +16,7 @@ const SNAKE_HEIGHT = 12;
  SCREEN_HEIGHT = 600;
 const player1_start_point = [10, 10];
 const player2_start_point = [10, 50];
-const SPEED = 20;
+const SPEED = 13;
 const numberOfPoiintsToWin = 10;
 
 server.listen(8080);
