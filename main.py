@@ -33,7 +33,7 @@ BLACK = (0,0,0)
 GREEN = (153, 204, 0)
 DARK_GREEN = (0, 255, 0)
 WHITE = (255,255,255)
-SELVER = (140, 140, 140)
+SELVER = (52, 55, 61)
 RED = [255, 0 , 0]
 DARK_RED = (177, 0, 0)
 SNAKE_HEIGHT = h(13)
@@ -446,7 +446,7 @@ def two_players_mode():
             playerId = data[0]['playerId'];
             direction = data[0]['dir']
 
-            if playerId == 1 :
+            if playerId == 0 :
                 self.player1Dir = direction;
             else :
                 self.player2Dir = direction;
@@ -456,7 +456,7 @@ def two_players_mode():
             playerId = data[0]['playerId'];
             pointToAdd = data[0]['point']
 
-            if playerId == 1 :
+            if playerId == 0 :
                 self.player1Points += pointToAdd;
             else :
                 self.player2Points += pointToAdd;
@@ -464,8 +464,8 @@ def two_players_mode():
         def on_changeColor(self, *data) :
             playerId = data[0]['playerId'];
             color = data[0]['color']
-
-            if playerId == 1 :
+            print(color)
+            if playerId == 0 :
                 self.player1Color = color;
             else :
                 self.player2Color = color;
@@ -482,12 +482,12 @@ def two_players_mode():
 
             # new Rectangle(this.body[0].x + width - 5, this.body[0].y + height - 10), new Rectangle(this.body[0].x + width - 5, this.body[0].y + height - 5)
             global GREEN, BLACK
-
-            if self.player1Color :
-                GREEN = RED
+            #
+            # if self.player1Color :
+            #     GREEN = RED
             i = 0
             while(i < len(player1)-1):
-                pygame.draw.rect(gameDisplay, GREEN, [player1[i], player1[i+1], w(13),h(13)])
+                pygame.draw.rect(gameDisplay, self.player1Color, [player1[i], player1[i+1], w(13),h(13)])
                 i = i + 2
 
             GREEN = (153, 204, 0)
@@ -509,12 +509,9 @@ def two_players_mode():
                 pygame.draw.rect(gameDisplay, BLACK, [player1[0] + SNAKE_WIDTH /4.3, player1[1] + SNAKE_HEIGHT /1.62, 3, 3])
 
 
-            if self.player2Color :
-                BLACK = RED
-
             i = 0
             while(i < len(player2) - 1) :
-                pygame.draw.rect(gameDisplay, BLACK, [player2[i], player2[i+1], w(13),h(13)])
+                pygame.draw.rect(gameDisplay, self.player2Color, [player2[i], player2[i+1], w(13),h(13)])
                 i = i + 2
 
             BLACK = (0,0,0)

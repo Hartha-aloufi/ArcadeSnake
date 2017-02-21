@@ -113,6 +113,8 @@ io.on('connection', function(socket){
 
 							if(player[i].detect_collision_with_other_player(player[j])){
 								player[i].color = RED;
+								io.emit('changeColor', {playerId : i, color : RED})
+
 								if(player[i].points != 0){
 									player[i].body.splice(player[i].body.length-1,1);
 									player[i].arr.splice(player[i].arr.length -2, 2);
@@ -153,8 +155,6 @@ io.on('connection', function(socket){
 			}
 		}
 
-		var player1Col = player[0].color == RED;
-		var player2Col = player[1].color == RED;
 		io.emit('draw', {player1 : player[0].arr, player2 : player[1].arr, food : [food.rect.x, food.rect.y]});
 
 
