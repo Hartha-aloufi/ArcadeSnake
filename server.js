@@ -30,7 +30,7 @@ var connectionCounter = 0;
 
 io.on('connection', function(socket){
 	connectionCounter++;
-
+	socket.emit('constructor');
 	// temprory, to handle double connections
 	if((connectionCounter & 1) == 1)
 		return;
@@ -82,8 +82,10 @@ io.on('connection', function(socket){
 
 		var dir = player[idx].direc;
 
-		if((dir % 2 == 0 && dir -1 != newDirection) || (dir % 2 != 0 && dir + 1 != newDirection))
+		if((dir % 2 == 0 && dir -1 != newDirection) || (dir % 2 != 0 && dir + 1 != newDirection)){
 				player[idx].direc = newDirection;
+				io.emit('changeDir', {playerId : idx, dir : newDirection})
+			}
 	});
 
 	socket.on('draw request', function(isGameStarted){
@@ -104,6 +106,7 @@ io.on('connection', function(socket){
 			if(player[i].move_head(SPEED, SCREEN_WIDTH, SCREEN_HEIGHT) ){
 					if(player[i].detect_self_collision()){
 							player[i].color = RED;
+							io.emit('changeColor', {playerId : i, color : RED})
 							//game over
 					} else {
 						for (var j = 0; j < player.length; j++) if(j != i){
@@ -114,10 +117,15 @@ io.on('connection', function(socket){
 									player[i].body.splice(player[i].body.length-1,1);
 									player[i].arr.splice(player[i].arr.length -2, 2);
 									player[i].points--;
+
+									io.emit('changePoints', {playerId : i, point : -1})
 								}
 
 							} else {
 								var color = i == 0 ? GREEN : BLACK;
+
+								if(color != player[i].color)
+									io.emit('changeColor', {playerId : i, color : color})
 								player[i].color = color;
 							}
 						}
@@ -126,7 +134,7 @@ io.on('connection', function(socket){
 
 			if(player[i].can_eat(food)){
 				player[i].eat();
-
+				io.emit('changePoints', {playerId : i, point : 1})
 				// for (var j = 0; j < player.length; j++) if(i != j){
 				// 	if(player[j].points != 0){
 				// 		player[j].points--;
@@ -147,7 +155,7 @@ io.on('connection', function(socket){
 
 		var player1Col = player[0].color == RED;
 		var player2Col = player[1].color == RED;
-		io.emit('draw', {player1Col : player1Col, player2Col : player2Col, player1 : player[0].arr,player2 : player[1].arr, food : [food.rect.x, food.rect.y], player1Dir : player[0].direc,  player2Dir : player[1].direc, player1Points : player[0].points, player2Points : player[1].points});
+		io.emit('draw', {player1 : player[0].arr, player2 : player[1].arr, food : [food.rect.x, food.rect.y]});
 
 
 		if(winner != -1){
@@ -261,6 +269,7 @@ function Snake(color, points, width, height, start_point, direc, eyeColor){
 		this.eyes = [new Rectangle(this.body[0].x + this.width - 5, this.body[0].y + this.height - 10), new Rectangle(this.body[0].x + this.width - 5, this.body[0].y + this.height - 5)];
 
 	}
+
 
 }
 
