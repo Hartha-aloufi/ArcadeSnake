@@ -6,13 +6,18 @@ import threading
 import time
 import Queue
 import os;
+import configparser
+
+
+config = configparser.ConfigParser()
+config.read('configFile.ini')
 
 position = 0, 0;
 # os.environ['SDL_VIDEO_CENTERED'] = "1";
 os.environ['SDL_VIDEO_WINDOW_POS'] = str(position[0]) + ", " + str(position[1]);
-RASP = 0
+RASP = int(config['DEFAULT']['rasp'])
 
-if(RASP):
+if RASP:
     import RPi.GPIO as GPIO
 
 
@@ -41,9 +46,9 @@ SNAKE_WIDTH = w(13)
 #EYE_SIZE = 3
 gameExit = False
 isGameStarted = False
-SPEED = 8
-winningPoints = 10;
-
+SPEED = int(config['DEFAULT']['playerspeed'])
+frameRate = int(config['DEFAULT']['framerate'])
+winningPoints = int(config['DEFAULT']['winningpoints'])
 # threadQeue = Queue.Queue()
 
 if RASP:
@@ -227,7 +232,7 @@ def intro_menu():
         pygame.draw.rect(gameDisplay, puse_mode_food.color, [puse_mode_food.rect.x, puse_mode_food.rect.y, puse_mode_food.rect.width, puse_mode_food.rect.height])
 
         pygame.display.update()
-        clock.tick(30)
+        clock.tick(frameRate)
 
 
 
@@ -367,7 +372,7 @@ def single_player_mode():
 
             gameExit = True
         pygame.display.update()
-        clock.tick(30)
+        clock.tick(frameRate)
 
 #
 # if playMode == 1 :
@@ -389,7 +394,8 @@ def two_players_mode():
             self.player2Color = BLACK;
             self.player1Points = 0;
             self.player2Points = 0;
-            print('sdfsdfasdfasdfa')
+            self.food = [100, 100]
+
         import sys
         def on_connect(self):
             print("Connected")
@@ -470,6 +476,11 @@ def two_players_mode():
             else :
                 self.player2Color = color;
 
+        def on_changeFoodPos(self, *data):
+            self.food[0] = data[0]['x'];
+            self.food[0] = data[0]['y'];
+
+
         def on_draw(self, *data):
             # threadQeue.put(data)
             global x
@@ -533,29 +544,12 @@ def two_players_mode():
                 pygame.draw.rect(gameDisplay, GREEN, [player2[0] + SNAKE_WIDTH /1.62, player2[1] + SNAKE_HEIGHT /1.62, 3, 3])
 
 
-            pygame.draw.rect(gameDisplay, RED, [food[0], food[1], w(7),h(7)])
+            pygame.draw.rect(gameDisplay, RED, [self.food[0], self.food[1], w(7),h(7)])
 
             messege_to_secreen('GREEN SNAKE : ' + (str(self.player1Points)), WHITE, 'bottom', 'left')
             messege_to_secreen('BLACK SNAKE : ' + (str(self.player2Points)), WHITE, 'bottom', 'right')
-            # for i in range(0, len(player)):
-            #     for j in range(0, len(player[i]['body'])):
-            #         pygame.draw.rect(gameDisplay, player[i]['color'], [player[i]['body'][j]['x'], player[i]['body'][j]['y'], player[i]['body'][j]['width'], player[i]['body'][j]['height']])
-            #
-            #     if i == 0:
-            #         messege_to_secreen('GREEN SNAKE : ' + (str(player[i]['points'])), WHITE, 'bottom', 'left')
-            #     elif(i == 1):
-            #         messege_to_secreen('BLACK SNAKE : ' + (str(player[i]['points'])), WHITE, 'bottom', 'right')
-            #     else :
-            #         messege_to_secreen('YELLOW SNAKE : ' + (str(player[i]['points])), WHITE, 'bottom', 'center')
 
-
-
-            # pygame.draw.rect(gameDisplay, food['color'], [food['rect']['x'], food['rect']['y'], food['rect']['width'], food['rect']['height']])
-
-
-
-
-    socketIO = SocketIO('localhost', 8080, Namespace)
+    socketIO = SocketIO(config['DEFAULT']['serverIP'], config['DEFAULT']['port'], Namespace)
 
     def net():
         socketIO.define(Namespace, "/")
@@ -636,7 +630,7 @@ def two_players_mode():
                             socketIO.emit('changeDirction', 4)
                             pass;
             socketIO.emit('draw request', isGameStarted)
-            clock.tick(15)
+            clock.tick(frameRate)
             pygame.display.update()
 
             if x == 2 :

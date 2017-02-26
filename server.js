@@ -152,10 +152,11 @@ io.on('connection', function(socket){
 				}
 
 				food.calc_new_pos();
+				io.emit('changeFoodPos', foodPos : {x : foo.x, y : food.y})
 			}
 		}
 
-		io.emit('draw', {player1 : player[0].arr, player2 : player[1].arr, food : [food.rect.x, food.rect.y]});
+		io.emit('draw', {player1 : player[0].arr, player2 : player[1].arr});
 
 
 		if(winner != -1){
